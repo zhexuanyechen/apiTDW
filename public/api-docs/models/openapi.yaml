@@ -754,7 +754,7 @@ paths:
             headers:
               Allow:
                 $ref: '#/components/headers/Allow'
-  '/products/personname/{personname}':
+  '/persons/personname/{personname}':
     get:
       tags:
         - '💡 Persons'
@@ -768,7 +768,7 @@ paths:
           description: Personname exists &lt;Response body is empty&gt;
         '404':
           $ref: '#/components/responses/Response_404'
-  '/products/{personId}/entities':
+  '/persons/{personId}/entities':
     get:
       tags:
         - '💡 Persons'
@@ -800,7 +800,7 @@ paths:
           $ref: '#/components/responses/Response_401'
         '404':
           $ref: '#/components/responses/Response_404'
-  '/products/{personId}/products':
+  '/persons/{personId}/products':
     get:
       tags:
         - '💡 Persons'
@@ -832,7 +832,7 @@ paths:
           $ref: '#/components/responses/Response_401'
         '404':
           $ref: '#/components/responses/Response_404'
-  '/products/{personId}/entities/add/{entityId}':
+  '/persons/{personId}/entities/add/{entityId}':
     put:
       tags:
         - '💡 Persons'
@@ -860,7 +860,7 @@ paths:
           $ref: '#/components/responses/Response_404'
         '406':
           $ref: '#/components/responses/Response_406'
-  '/products/{personId}/entities/rem/{entityId}':
+  '/persons/{personId}/entities/rem/{entityId}':
     put:
       tags:
         - '💡 Persons'
@@ -888,7 +888,7 @@ paths:
           $ref: '#/components/responses/Response_404'
         '406':
           $ref: '#/components/responses/Response_406'
-  '/products/{personId}/products/add/{productId}':
+  '/persons/{personId}/products/add/{productId}':
     put:
       tags:
         - '💡 Persons'
@@ -916,7 +916,7 @@ paths:
           $ref: '#/components/responses/Response_404'
         '406':
           $ref: '#/components/responses/Response_406'
-  '/products/{personId}/persons/rem/{personId}':
+  '/persons/{personId}/products/rem/{productId}':
     put:
       tags:
         - '💡 Persons'
