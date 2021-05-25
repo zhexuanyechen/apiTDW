@@ -1,0 +1,148 @@
+:root {
+    --displayCrear: block;
+
+}
+
+body {
+    background-color: #cce5ff;
+}
+
+h2 {
+    font-weight: bolder;
+}
+
+a:hover {
+    color: black;
+}
+
+.subtitulo {
+    text-align: center;
+    margin-bottom: 0.3em;
+}
+
+.barra_nav {
+    background-color: #b3d7ff;
+    border-bottom: 2px solid #0077ff;
+}
+
+.navbar-brand {
+    color: black;
+    font-weight: bold;
+}
+
+button>img {
+    width: 1.4rem;
+}
+
+.card>img {
+    width: 75%;
+    height: 17.5vw;
+    object-fit: cover;
+    display: block;
+    margin: 0.5em auto 0.3em auto;
+}
+
+.red,
+.editar,
+.loginbtn,
+.crear {
+    border: 2px solid;
+    border-radius: 4px;
+    color: black;
+    font-weight: bold;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+    padding: 0.2em 2em;
+    font-size: 1.25rem;
+}
+
+.loginbtn,
+.editar,
+.crear {
+    border-color: #339966;
+    background-color: #d8f3e5;
+}
+
+.red {
+    border-color: red;
+    background-color: #ffe6e6;
+}
+
+.crear {
+    display: var(--displayCrear);
+    margin: 0 auto 0.5em auto;
+}
+
+.red:hover {
+    background-color: #ffb3b3;
+}
+
+.editar:hover,
+.loginbtn:hover {
+    background-color: #66cc99;
+}
+
+.loginImg {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 35%;
+}
+
+.form-label {
+    font-weight: bold;
+    color: black;
+}
+
+.btn-close:hover {
+    color: black;
+    background-color: lightgray;
+}
+
+.botonesObjeto {
+    display: none;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.logout {
+    display: none;
+}
+
+.card {
+    border: 2px solid #000066;
+    box-shadow: 6px 6px 10px rgba(0, 0, 0, 0.5);
+}
+
+.imagen {
+    cursor: pointer;
+}
+
+#mBodyFormulario label,
+#mBodyFormulario h4 {
+    text-transform: capitalize;
+}
+
+.datos {
+    overflow: hidden;
+}
+
+@media only screen and (max-width: 768px) {
+    .card>img {
+        width: 100%;
+        object-fit: contain;
+    }
+
+    .card {
+        margin: 0 10%;
+    }
+}
+
+@media only screen and (max-width: 1000px) and (min-width:768px) {
+
+    .red,
+    .editar,
+    .loginbtn {
+        padding: 0.2em 1em;
+        font-size: 1rem;
+    }
+}
