@@ -172,9 +172,9 @@ class UserController
      */
     public function post(Request $request, Response $response): Response
     {
-        if (!$this->checkWriterScope($request)) { // 403
-            return Error::error($response, StatusCode::STATUS_FORBIDDEN);
-        }
+        //if (!$this->checkWriterScope($request)) { // 403
+        //    return Error::error($response, StatusCode::STATUS_FORBIDDEN);
+        //}
 
         $req_data
             = $request->getParsedBody() ?? json_decode($request->getBody(), true) ?? [];
@@ -266,6 +266,11 @@ class UserController
         // password
         if (isset($req_data['password'])) {
             $user->setPassword($req_data['password']);
+        }
+
+        // fechanac
+        if (isset($req_data['fechanac'])) {
+            $user->setFechaNac($req_data['fechanac']);
         }
 
         // role

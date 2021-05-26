@@ -1,22 +1,4 @@
-let authHeader = null;
-const productosId = document.getElementById("productosCol");
-const entidadesId = document.getElementById("entidadesCol");
-const personasId = document.getElementById("personasCol");
-let arrayEntidades = [], arrayPersonas =[], arrayProductos=[];
-const documento = document.documentElement;
-const loginbtn = document.getElementById("loginNav");
-const logoutbtn = document.getElementById("logout");
-const modalLogin = new bootstrap.Modal(document.getElementById("modalLogin"), {
-    keyboard: false,
-    focus: true
-});
-const modalForm= new bootstrap.Modal(document.getElementById("modalFormulario"), {
-    keyboard: false,
-    focus: true
-});
-
-$("#login").click(function(e){
-    e.preventDefault();
+function login(){
     let user = $("#usuario").val();
     let pwd = $("#pwd").val();
     let dataString = "username="+user+"&password="+pwd;
@@ -33,7 +15,7 @@ $("#login").click(function(e){
             modalLogin.hide();
         }
     });
-});
+}
 
 function showToken(authHeader) {
     let token = authHeader.split(' ')[1];   // Elimina 'Bearer '
@@ -102,6 +84,14 @@ function cargarAjaxProd(){
     });
 }
 
+function cargarObjetos(id, objeto) {
+    let htmlId = id;
+    htmlId.innerHTML += `<div id='${objeto.id}' class='card mb-3'><img src='${objeto.imagen}' class='card-img-top imagen'>
+        <div class='card-body'><h5 class='card-title text-center'>${objeto.nombre}</h5></div>
+        <div class='mb-2 botonesObjeto'><button type='button' class='btn red borrar'>Borrar</button>
+        <button type='button' class='btn editar' data-bs-toggle='modal' data-bs-target='#modalFormulario'>Editar</button></div></div>`;
+}
+
 $(document).ready(function(){
     cargarAjax();
 });
@@ -119,13 +109,11 @@ function showDescAjax(prodId, tipo){
             else if(tipo === "persons")
                 datosAux = data.person;
 
-            console.log(datosAux);
             mBodyFormulario.innerHTML = "";
             for(let atributo in datosAux){
                 if (atributo === "products" || atributo === "persons" || atributo === "entities") {
                     let id = "lista" + atributo;
                     mBodyFormulario.innerHTML += `<div class='mb-2'><h4>${atributo}</h4><ul class='datos' id='${id}'></ul></div>`;
-
                     if(datosAux[atributo] === null){
                         document.getElementById(id).innerText = "Sin relaciones";
                     }else{
@@ -158,6 +146,9 @@ function addClickListener(selector, tipo){
             console.log(prodId + " " + prodId.slice(0, -4));
             showDescAjax(prodId.slice(0, -4), tipo);
         });
+        item.addEventListener("error", function () {
+            item.src = "./iconos/not-found-image.jpg";
+        })
     });
 }
 
@@ -174,10 +165,12 @@ function rolUser(authHeader, username) {
                     sessionStorage.setItem("role", "writer");
                     showBtn();
                     console.log("Es writer");
+                    userid=usuarioEncontrado.user.id;
                 }else if(usuarioEncontrado != null && usuarioEncontrado.user.role !== "writer"){
                     sessionStorage.setItem("logueado", "true");
                     sessionStorage.setItem("role", "reader");
                     console.log("Es reader");
+                    userid=usuarioEncontrado.user.id;
                 }else{
                     console.log("no se ha encontrado");
                 }
@@ -195,14 +188,16 @@ function showBtn() {
             displaybtn[i].style.display = "flex";
         }
         loginbtn.style.display = "none";
-        logoutbtn.style.display = "block";
+        logoutbtn.style.display = "inline-block";
+        signupbtn.style.display = "none";
         documento.style.setProperty("--displayCrear", "block");
     } else {
         for (let i = 0; i < displaybtn.length; i++) {
             displaybtn[i].style.display = "none";
         }
-        loginbtn.style.display = "block";
+        loginbtn.style.display = "inline-block";
         logoutbtn.style.display = "none";
+        signupbtn.style.display = "inline-block";
         documento.style.setProperty("--displayCrear", "none");
     }
 }
@@ -211,10 +206,98 @@ function logout() {
     sessionStorage.setItem("logueado", "false");
 }
 
-document.getElementById("logout").addEventListener("click", () => {
+logoutbtn.addEventListener("click", () => {
     logout();
     showBtn();
 });
 
-showBtn();
+loginbtn.addEventListener("click", ()=>{
+        let html =`  <div class="modal-header">
+                            <h3 class="modal-title">Login</h3>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                     </div>
+                     <form class="modal-body">
+                        <div class="mb-2">
+                            <img class="loginImg" src="iconos/user.png" class="me-2">
+                        </div>
+                        <div class="mb-2">
+                            <label for="usuario" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" placeholder="Usuario" id="usuario">
+                        </div>
+                        <div class="mb-2">
+                            <label for="pwd" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" placeholder="Contraseña" id="pwd">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn red" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" id="login" class="btn loginbtn"><img
+                                    src="iconos/user.png" class="me-2">Login</button>
+                        </div>
+                     </form>
+                `;
+    document.getElementById("contenidoModalLogin").innerHTML=html;
+    $("#login").click((e)=>{
+        e.preventDefault();
+        login();
+    });
+    modalLogin.show();
+});
+
+signupbtn.addEventListener("click", ()=>{
+    let html=`<div class="modal-header">
+                        <h3 class="modal-title">Sign up</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form class="modal-body">
+                        <div class="mb-2">
+                            <img class="loginImg" src="iconos/user.png" class="me-2">
+                        </div>
+                        <div class="mb-2">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="text" class="form-control" placeholder="Email" id="email">
+                        </div>
+                        <div class="mb-2">
+                            <label for="usuario" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" placeholder="Usuario" id="usuario">
+                        </div>
+                        <div class="mb-2">
+                            <label for="pwd" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" placeholder="Contraseña" id="pwd">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn red" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" id="signup" class="btn loginbtn"><img
+                                    src="iconos/user.png" class="me-2">Sign up</button>
+                        </div>
+                    </form>`;
+    document.getElementById("contenidoModalLogin").innerHTML=html;
+    $("#signup").click((e)=>{
+        e.preventDefault();
+        signup();
+    });
+    modalLogin.show();
+});
+
+function signup(){
+    let user = $("#usuario").val();
+    let pwd = $("#pwd").val();
+    let email = $("#email").val();
+    let dataString = "username="+user+"&email="+email+"&password="+pwd+"&role=reader";
+    console.log(dataString);
+    $.ajax({
+        type: "POST",
+        url: "/api/v1/users",
+        data: {username: user, email: email, password:pwd, role:"reader"},
+        cache: false,
+        success: function (data, textStatus){
+            console.log(textStatus);
+            modalLogin.hide();
+        }
+    });
+};
+
+function actualizarUser(){
+
+}
+
 

@@ -109,9 +109,9 @@ paths:
       summary: Creates a User resource.
       description: Creates a new user
       operationId: api_users_post
-      security:
-        - MiWApiSecurity:
-            - writer
+      #security:
+       # - MiWApiSecurity:
+        #    - writer
       requestBody:
         $ref: '#/components/requestBodies/UserRequestBody'
       responses:
@@ -180,7 +180,7 @@ paths:
         - $ref: '#/components/parameters/ifMatchParam'
       security:
         - MiWApiSecurity:
-            - writer
+            - reader
       requestBody:
         $ref: '#/components/requestBodies/UserRequestBody'
       responses:

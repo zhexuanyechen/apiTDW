@@ -1,3 +1,30 @@
+//authHeader de Ajax
+let authHeader = null;
+//columnas del html
+const productosId = document.getElementById("productosCol");
+const entidadesId = document.getElementById("entidadesCol");
+const personasId = document.getElementById("personasCol");
+//arrays donde se guardan los datos recibidos de la api con las clases correspondientes
+let arrayEntidades = [], arrayPersonas =[], arrayProductos=[];
+//documento
+const documento = document.documentElement;
+//btn login/logout/signup
+const loginbtn = document.getElementById("loginNav");
+const logoutbtn = document.getElementById("logout");
+const signupbtn = document.getElementById("signupNav");
+//modales
+const modalLogin = new bootstrap.Modal(document.getElementById("modalLogin"), {
+    keyboard: false,
+    focus: true
+});
+const modalForm= new bootstrap.Modal(document.getElementById("modalFormulario"), {
+    keyboard: false,
+    focus: true
+});
+//para guardar userid cuando se logue
+let userid;
+
+
 function Persona(id, nombre, fecha_nac, fecha_muerto, img, wiki, entidades, productos) {
     this.id = id;
     this.nombre = nombre;
@@ -32,14 +59,6 @@ function Producto(id, nombre, fecha_inic, fecha_fin, img, wiki, personas, entida
     this.tipo = "producto";
     this.personas = personas;
     this.entidades = entidades;
-}
-
-function cargarObjetos(id, objeto) {
-    let htmlId = id;
-    htmlId.innerHTML += `<div id='${objeto.id}' class='card mb-3'><img src='${objeto.imagen}' class='card-img-top imagen'>
-        <div class='card-body'><h5 class='card-title text-center'>${objeto.nombre}</h5></div>
-        <div class='mb-2 botonesObjeto'><button type='button' class='btn red borrar'>Borrar</button>
-        <button type='button' class='btn editar' data-bs-toggle='modal' data-bs-target='#modalFormulario'>Editar</button></div></div>`;
 }
 
 function borrar(elem) {
