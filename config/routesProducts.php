@@ -28,8 +28,8 @@ return function (App $app) {
     $app->get(
         $_ENV['RUTA_API'] . ProductController::PATH_PRODUCTS,
         ProductController::class . ':cget'
-    )->setName('tdw_cget_products')
-        ->add(JwtMiddleware::class);
+    )->setName('tdw_cget_products');
+        //->add(JwtMiddleware::class);
 
     // GET: Returns a product based on a single ID
     $app->get(

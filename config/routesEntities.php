@@ -28,8 +28,8 @@ return function (App $app) {
     $app->get(
         $_ENV['RUTA_API'] . EntityController::PATH_ENTITIES,
         EntityController::class . ':cget'
-    )->setName('tdw_cget_entities')
-        ->add(JwtMiddleware::class);
+    )->setName('tdw_cget_entities');
+       // ->add(JwtMiddleware::class);
 
     // GET: Returns a entity based on a single ID
     $app->get(

@@ -1,4 +1,4 @@
-function Persona(id, nombre, fecha_nac, fecha_muerto, img, wiki) {
+function Persona(id, nombre, fecha_nac, fecha_muerto, img, wiki, entidades, productos) {
     this.id = id;
     this.nombre = nombre;
     this.fecha_nac = fecha_nac;
@@ -6,9 +6,11 @@ function Persona(id, nombre, fecha_nac, fecha_muerto, img, wiki) {
     this.imagen = img;
     this.wiki = wiki;
     this.tipo = "personas";
+    this.entidades = entidades;
+    this.productos = productos;
 }
 
-function Entidad(id, nombre, fecha_inic, fecha_fin, img, wiki, personas) {
+function Entidad(id, nombre, fecha_inic, fecha_fin, img, wiki, personas, productos) {
     this.id = id;
     this.nombre = nombre;
     this.fecha_nac = fecha_inic;
@@ -17,6 +19,7 @@ function Entidad(id, nombre, fecha_inic, fecha_fin, img, wiki, personas) {
     this.wiki = wiki;
     this.tipo = "entidades";
     this.personas = personas;
+    this.productos = productos;
 }
 
 function Producto(id, nombre, fecha_inic, fecha_fin, img, wiki, personas, entidades) {
@@ -39,7 +42,7 @@ function cargarObjetos(id, objeto) {
         "<button type='button' class='btn editar' data-bs-toggle='modal' data-bs-target='#modalFormulario'>Editar</button></div></div>";
 }
 
-function cargarDatosLocal() {
+/*function cargarDatosLocal() {
     let tim = new Persona("tim", "Tim Berners-Lee", "1955-06-08", "", "https://www.digitalbizmagazine.com/wp-content/uploads/2017/03/tim-berners-lee-1068x712.jpg", "https://es.wikipedia.org/wiki/Tim_Berners-Lee");
     let brendan = new Persona("brendan", "Brendan Eich", "1961-07-04", "", "https://images.fastcompany.net/image/upload/w_1280,f_auto,q_auto,fl_lossy/wp-cms/uploads/2019/04/p-2-qandampa-with-javascript-creator-and-brave-ceo-brendan-eich.jpg", "https://en.wikipedia.org/wiki/Brendan_Eich");
     let vannevar = new Persona("vannevar", "Vannevar Bush", "1890-03-11", "1974-06-28", "http://4.bp.blogspot.com/-ITqAk_Bdac4/UQ2bFEBYuaI/AAAAAAAAAOo/aMA4UN49r_w/s1600/Vannevar-Bush.jpg", "https://es.wikipedia.org/wiki/Vannevar_Bush");
@@ -59,7 +62,7 @@ function cargarDatosLocal() {
 
     let cargaArray = [tim, brendan, vannevar, bill, xhtml, xml, html, js, css, http, ibm, w3c, microsoft, mozilla];
     localStorage.setItem("cargaArray", JSON.stringify(cargaArray));
-}
+}*/
 
 function cargarIndex() {
     let productosId = document.getElementById("productosCol");

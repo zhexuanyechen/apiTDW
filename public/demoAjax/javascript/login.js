@@ -28,10 +28,11 @@ function login() {
         }
     }
 }
-document.getElementById("login").addEventListener("click", () => {
-    login();
+/*document.getElementById("login").addEventListener("click", () => {
+    //loginAjax();
+    //login();
     showBtn();
-});
+});*/
 
 function logout() {
     sessionStorage.setItem("logueado", "false");

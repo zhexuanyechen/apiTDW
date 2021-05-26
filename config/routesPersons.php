@@ -28,8 +28,8 @@ return function (App $app) {
     $app->get(
         $_ENV['RUTA_API'] . PersonController::PATH_PERSONS,
         PersonController::class . ':cget'
-    )->setName('tdw_cget_persons')
-        ->add(JwtMiddleware::class);
+    )->setName('tdw_cget_persons');
+       // ->add(JwtMiddleware::class);
 
     // GET: Returns a person based on a single ID
     $app->get(

@@ -251,9 +251,9 @@ paths:
       summary: Retrieves the collection of Product resources.
       description: Returns all products from the system that the user has access to.
       operationId: api_products_cget
-      security:
-        - MiWApiSecurity:
-            - reader
+      #security:
+       # - MiWApiSecurity:
+        #    - reader
       parameters:
         - $ref: '#/components/parameters/orderParam'
         - $ref: '#/components/parameters/orderingParam'
@@ -601,9 +601,9 @@ paths:
       summary: Retrieves the collection of Person resources.
       description: Returns all person from the system that the user has access to.
       operationId: api_persons_cget
-      security:
-        - MiWApiSecurity:
-            - reader
+      #security:
+       # - MiWApiSecurity:
+        #    - reader
       parameters:
         - $ref: '#/components/parameters/orderParam'
         - $ref: '#/components/parameters/orderingParam'
@@ -951,9 +951,9 @@ paths:
       summary: Retrieves the collection of Entity resources.
       description: Returns all entities from the system that the user has access to.
       operationId: api_entities_cget
-      security:
-        - MiWApiSecurity:
-            - reader
+      #security:
+       # - MiWApiSecurity:
+        #    - reader
       parameters:
         - $ref: '#/components/parameters/orderParam'
         - $ref: '#/components/parameters/orderingParam'
