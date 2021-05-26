@@ -64,7 +64,7 @@ function cargarObjetos(id, objeto) {
     localStorage.setItem("cargaArray", JSON.stringify(cargaArray));
 }*/
 
-function cargarIndex() {
+/*function cargarIndex() {
     let productosId = document.getElementById("productosCol");
     let entidadesId = document.getElementById("entidadesCol");
     let personasId = document.getElementById("personasCol");
@@ -79,9 +79,9 @@ function cargarIndex() {
             cargarObjetos(entidadesId, array[i]);
         }
     }
-}
+}*/
 
-function cargarPagina() {
+/*function cargarPagina() {
     if (localStorage.getItem("cargado") === null) {
         cargarDatosLocal();
         cargarIndex();
@@ -89,10 +89,10 @@ function cargarPagina() {
     } else {
         cargarIndex();
     }
-};
+};*/
 
-cargarDatosLocal(); //Descomentar por si se quiere volver a los valores preterminados
-cargarPagina();
+//cargarDatosLocal(); //Descomentar por si se quiere volver a los valores preterminados
+//cargarPagina();
 
 function borrar(elem) {
     let elemId = elem.parentNode.parentNode.id;

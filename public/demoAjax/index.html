@@ -116,69 +116,8 @@
             integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous">
     </script>
     <script src="./javascript/carga.js"></script>
-    <script src="./javascript/login.js"></script>
     <script src="./javascript/crearFormulario.js"></script>
     <script src="./javascript/showD.js"></script>
     <script src="./javascript/peticionesAjax.js"></script>
-
-<!--<script type="text/javascript">
-    //let authHeader = null;
-    $("#btn-login").click(function(){
-        $.post(
-            "/access_token",
-            $("#form-login").serialize(),
-            null
-            ).success(function (data, textStatus, request) {
-                // => show scopes, users, products, ...
-                authHeader = request.getResponseHeader('Authorization');
-                showData(authHeader);
-                console.log(data)
-            }).fail(function (xhr) {
-                if (xhr.responseJSON && xhr.responseJSON.message) {
-                message = xhr.responseJSON.message;
-                }
-                alert("Incorrecto :( \n" + message)
-            });
-    });
-
-    function showData(authHeader) {
-        showToken(authHeader);
-        showProducts(authHeader);
-        showUsers(authHeader);
-    }
-
-    function showToken(authHeader) {
-        let token = authHeader.split(' ')[1];   // Elimina 'Bearer '
-        let myData = JSON.parse(atob(token.split('.')[1]));
-        $('#mytoken').html(
-            "User: " + JSON.stringify(myData.sub) +
-            " - JWT Scopes: " + JSON.stringify(myData.scopes)
-        );
-    }
-
-    function showProducts(authHeader) {
-        $.ajax({
-            type: "GET",
-            url: '/api/v1/products',
-            headers: {"Authorization": authHeader},
-            // dataType: 'json',
-            success: function (data) {
-                $('#products').html(JSON.stringify(data));
-            }
-        })
-    }
-
-    function showUsers(authHeader) {
-        $.ajax({
-            type: "GET",
-            url: '/api/v1/users',
-            headers: {"Authorization": authHeader},
-            // dataType: 'json',
-            success: function (data) {
-                $('#users').html(JSON.stringify(data));
-            }
-        })
-    }
-</script>-->
 </body>
 </html>
