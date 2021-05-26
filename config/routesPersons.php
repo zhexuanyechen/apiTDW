@@ -35,8 +35,8 @@ return function (App $app) {
     $app->get(
         $_ENV['RUTA_API'] . PersonController::PATH_PERSONS . $REGEX_PERSON_ID,
         PersonController::class . ':get'
-    )->setName('tdw_get_persons')
-        ->add(JwtMiddleware::class);
+    )->setName('tdw_get_persons');
+        //->add(JwtMiddleware::class);
 
     // GET: Returns status code 204 if personname exists
     $app->get(

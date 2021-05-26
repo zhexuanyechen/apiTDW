@@ -2,11 +2,15 @@ let authHeader = null;
 const productosId = document.getElementById("productosCol");
 const entidadesId = document.getElementById("entidadesCol");
 const personasId = document.getElementById("personasCol");
-let array = [];
+let arrayEntidades = [], arrayPersonas =[], arrayProductos=[];
 const documento = document.documentElement;
 const loginbtn = document.getElementById("loginNav");
 const logoutbtn = document.getElementById("logout");
 const modalLogin = new bootstrap.Modal(document.getElementById("modalLogin"), {
+    keyboard: false,
+    focus: true
+});
+const modalForm= new bootstrap.Modal(document.getElementById("modalFormulario"), {
     keyboard: false,
     focus: true
 });
@@ -53,9 +57,11 @@ function cargarAjaxEntidades(){
         success: function (datos) {
             datos.entities.forEach((entidad)=>{
                 let entityAux = entidad.entity;
-                let nuevaEnt = new Entidad(entityAux.id + "ent", entityAux.name, entityAux.birthDate, entityAux.deathDate,
+                let nuevaEnt = new Entidad(entityAux.id + "enti", entityAux.name, entityAux.birthDate, entityAux.deathDate,
                     entityAux.imageUrl, entityAux.wikiUrl, entityAux.persons, entityAux.products);
                 cargarObjetos(entidadesId, nuevaEnt);
+                addClickListener("#entidadesCol .imagen", "entities");
+                arrayEntidades.push(nuevaEnt);
             });
         }
     });
@@ -71,12 +77,14 @@ function  cargarAjaxPersonas(){
                 let nuevaPersona = new Persona(personAux.id + "pers", personAux.name, personAux.birthDate, personAux.deathDate,
                     personAux.imageUrl, personAux.wikiUrl, personAux.entities, personAux.products);
                 cargarObjetos(personasId, nuevaPersona);
+                addClickListener("#personasCol .imagen", "persons");
+                arrayPersonas.push(nuevaPersona);
             });
         }
     });
 }
 
-function  cargarAjaxProd(){
+function cargarAjaxProd(){
     $.ajax({
         type: "GET",
         url: '/api/v1/products',
@@ -87,6 +95,8 @@ function  cargarAjaxProd(){
                 let nuevoProd = new Producto(prodAux.id + "prod", prodAux.name, prodAux.birthDate, prodAux.deathDate,
                     prodAux.imageUrl, prodAux.wikiUrl, prodAux.persons, prodAux.entities);
                 cargarObjetos(productosId, nuevoProd);
+                addClickListener("#productosCol .imagen", "products");
+                arrayProductos.push(nuevoProd);
             });
         }
     });
@@ -94,7 +104,62 @@ function  cargarAjaxProd(){
 
 $(document).ready(function(){
     cargarAjax();
-})
+});
+
+function showDescAjax(prodId, tipo){
+    $.ajax({
+        type: "GET",
+        url: `/api/v1/${tipo}/${prodId}`,
+        success: function (data) {
+            let datosAux = "";
+            if(tipo === "products")
+                datosAux = data.product;
+            else if(tipo === "entities")
+                datosAux = data.entity;
+            else if(tipo === "persons")
+                datosAux = data.person;
+
+            console.log(datosAux);
+            mBodyFormulario.innerHTML = "";
+            for(let atributo in datosAux){
+                if (atributo === "products" || atributo === "persons" || atributo === "entities") {
+                    let id = "lista" + atributo;
+                    mBodyFormulario.innerHTML += `<div class='mb-2'><h4>${atributo}</h4><ul class='datos' id='${id}'></ul></div>`;
+
+                    if(datosAux[atributo] === null){
+                        document.getElementById(id).innerText = "Sin relaciones";
+                    }else{
+                        for (let i = 0; i < datosAux[atributo].length; i++) {
+                            let aux = "";
+                            if (atributo === "products") {
+                                aux = arrayProductos.find(producto => producto.id.slice(0, -4) == datosAux[atributo][i]);
+                            }else if (atributo === "entities"){
+                                aux = arrayEntidades.find(entidad => entidad.id.slice(0, -4) == datosAux[atributo][i]);
+                            }else if (atributo === "persons"){
+                                aux = arrayPersonas.find(persona => persona.id.slice(0, -4) == datosAux[atributo][i]);
+                            }
+                            document.getElementById(id).innerHTML += `<li>${aux.nombre}</li>`;
+                        }
+                    }
+                } else if (atributo === "wikiUrl") {
+                    mBodyFormulario.innerHTML += `<div class='mb-2 wiki'><h4>${atributo}</h4><a href='${datosAux[atributo]}' class='datos' target='_blank'>${datosAux[atributo]}</a></div>`;
+                } else if (atributo !== "id"){
+                    mBodyFormulario.innerHTML += `<div class='mb-2'><h4>${atributo}</h4><p class='datos'>${datosAux[atributo]}</p></div>`;
+                }
+            }
+            modalForm.show();
+        }
+    });
+}
+function addClickListener(selector, tipo){
+    document.querySelectorAll(selector).forEach(item => {
+        item.addEventListener("click", function (event) {
+            let prodId = event.target.parentNode.id;
+            console.log(prodId + " " + prodId.slice(0, -4));
+            showDescAjax(prodId.slice(0, -4), tipo);
+        });
+    });
+}
 
 function rolUser(authHeader, username) {
     $.ajax({
@@ -152,3 +217,4 @@ document.getElementById("logout").addEventListener("click", () => {
 });
 
 showBtn();
+

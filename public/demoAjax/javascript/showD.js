@@ -1,5 +1,6 @@
 function showD(elem) {
     elemId = elem.parentNode.id;
+    console.log(elemId);
     let objetoShow = localizarElem(elemId);
     formulario.innerHTML = "";
 

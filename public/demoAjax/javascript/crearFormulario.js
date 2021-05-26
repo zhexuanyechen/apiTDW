@@ -1,9 +1,9 @@
 let elemId, indiceElem, objetoEditar;
-const formulario = document.getElementById("mBodyFormulario");
+const mBodyFormulario = document.getElementById("mBodyFormulario");
 let localArray = JSON.parse(localStorage.getItem("cargaArray"));
 const tituloForm = document.getElementById("modalFormTitulo");
 
-function crear(ID) {
+/*function crear(ID) {
     document.getElementById("save").innerHTML = "<button type='submit' id='guardarNuevo' class='btn loginbtn' data-bs-dismiss='modal'> Guardar </button>";
     document.getElementById("modalFormTitulo").innerHTML = "Añadir nuevo";
     let objetoCrear;
@@ -118,4 +118,4 @@ function cargarFormulario(objetoF) {
 
 document.getElementById("guardarCambios").addEventListener("click", function () {
     guardar(objetoEditar, true);
-});
+});*/

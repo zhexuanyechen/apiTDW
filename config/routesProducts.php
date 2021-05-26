@@ -35,8 +35,8 @@ return function (App $app) {
     $app->get(
         $_ENV['RUTA_API'] . ProductController::PATH_PRODUCTS . $REGEX_PRODUCT_ID,
         ProductController::class . ':get'
-    )->setName('tdw_get_products')
-        ->add(JwtMiddleware::class);
+    )->setName('tdw_get_products');
+        //->add(JwtMiddleware::class);
 
     // GET: Returns status code 204 if productname exists
     $app->get(

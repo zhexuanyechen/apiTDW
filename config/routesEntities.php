@@ -35,8 +35,8 @@ return function (App $app) {
     $app->get(
         $_ENV['RUTA_API'] . EntityController::PATH_ENTITIES . $REGEX_ENTITY_ID,
         EntityController::class . ':get'
-    )->setName('tdw_get_entities')
-        ->add(JwtMiddleware::class);
+    )->setName('tdw_get_entities');
+        //->add(JwtMiddleware::class);
 
     // GET: Returns status code 204 if entityname exists
     $app->get(

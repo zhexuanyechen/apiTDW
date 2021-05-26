@@ -36,10 +36,10 @@ function Producto(id, nombre, fecha_inic, fecha_fin, img, wiki, personas, entida
 
 function cargarObjetos(id, objeto) {
     let htmlId = id;
-    htmlId.innerHTML += "<div id='" + objeto.id + "' class='card mb-3'><img src='" + objeto.imagen + "' class='card-img-top imagen' data-bs-toggle='modal' data-bs-target='#modalFormulario'>" +
-        "<div class='card-body'><h5 class='card-title text-center'>" + objeto.nombre + "</h5></div>" +
-        "<div class='mb-2 botonesObjeto'><button type='button' class='btn red borrar'>Borrar</button>" +
-        "<button type='button' class='btn editar' data-bs-toggle='modal' data-bs-target='#modalFormulario'>Editar</button></div></div>";
+    htmlId.innerHTML += `<div id='${objeto.id}' class='card mb-3'><img src='${objeto.imagen}' class='card-img-top imagen'>
+        <div class='card-body'><h5 class='card-title text-center'>${objeto.nombre}</h5></div>
+        <div class='mb-2 botonesObjeto'><button type='button' class='btn red borrar'>Borrar</button>
+        <button type='button' class='btn editar' data-bs-toggle='modal' data-bs-target='#modalFormulario'>Editar</button></div></div>`;
 }
 
 function borrar(elem) {

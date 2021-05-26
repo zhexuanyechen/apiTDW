@@ -327,9 +327,9 @@ paths:
       summary: Retrieves a Product resource based on a single ID.
       description: Returns the product identified by `productId`.
       operationId: api_products_get
-      security:
-        - MiWApiSecurity:
-            - reader
+      #security:
+       # - MiWApiSecurity:
+        #    - reader
       responses:
         '200':
           description: Product
@@ -677,9 +677,9 @@ paths:
         summary: Retrieves a Person resource based on a single ID.
         description: Returns the person identified by `personId`.
         operationId: api_persons_get
-        security:
-          - MiWApiSecurity:
-              - reader
+        #security:
+         # - MiWApiSecurity:
+          #    - reader
         responses:
           '200':
             description: Person
@@ -1027,9 +1027,9 @@ paths:
       summary: Retrieves a Entity resource based on a single ID.
       description: Returns the entity identified by `entityId`.
       operationId: api_entities_get
-      security:
-        - MiWApiSecurity:
-            - reader
+      #security:
+       # - MiWApiSecurity:
+        #    - reader
       responses:
         '200':
           description: Entity
