@@ -3,11 +3,16 @@ const productosId = document.getElementById("productosCol");
 const entidadesId = document.getElementById("entidadesCol");
 const personasId = document.getElementById("personasCol");
 let array = [];
-//const documento = document.documentElement;
-//const loginbtn = document.getElementById("loginNav");
-//const logoutbtn = document.getElementById("logout");
+const documento = document.documentElement;
+const loginbtn = document.getElementById("loginNav");
+const logoutbtn = document.getElementById("logout");
+const modalLogin = new bootstrap.Modal(document.getElementById("modalLogin"), {
+    keyboard: false,
+    focus: true
+});
 
-$("#login").click(function(){
+$("#login").click(function(e){
+    e.preventDefault();
     let user = $("#usuario").val();
     let pwd = $("#pwd").val();
     let dataString = "username="+user+"&password="+pwd;
@@ -20,16 +25,11 @@ $("#login").click(function(){
             authHeader = request.getResponseHeader('Authorization');
             console.log(data);
             console.log("holiwi");
-            existeUser(authHeader, user);
+            rolUser(authHeader, user);
+            modalLogin.hide();
         }
     });
 });
-
-//function showData(authHeader) {
-    //showToken(authHeader);
-    //cargarAjax(authHeader);
-    //showUsers(authHeader);
-//}
 
 function showToken(authHeader) {
     let token = authHeader.split(' ')[1];   // Elimina 'Bearer '
@@ -96,7 +96,7 @@ $(document).ready(function(){
     cargarAjax();
 })
 
-function existeUser(authHeader, username) {
+function rolUser(authHeader, username) {
     $.ajax({
         type: "GET",
         url: '/api/v1/users',
@@ -108,7 +108,11 @@ function existeUser(authHeader, username) {
                     sessionStorage.setItem("logueado", "true");
                     sessionStorage.setItem("role", "writer");
                     showBtn();
-                    console.log("Es escritor");
+                    console.log("Es writer");
+                }else if(usuarioEncontrado != null && usuarioEncontrado.user.role !== "writer"){
+                    sessionStorage.setItem("logueado", "true");
+                    sessionStorage.setItem("role", "reader");
+                    console.log("Es reader");
                 }else{
                     console.log("no se ha encontrado");
                 }
