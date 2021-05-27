@@ -8,10 +8,12 @@ const personasId = document.getElementById("personasCol");
 let arrayEntidades = [], arrayPersonas =[], arrayProductos=[];
 //documento
 const documento = document.documentElement;
-//btn login/logout/signup
+//btn login/logout/signup/crear/editar/eliminar
 const loginbtn = document.getElementById("loginNav");
 const logoutbtn = document.getElementById("logout");
 const signupbtn = document.getElementById("signupNav");
+const editarbtn = document.getElementById("editUser");
+const botonesCrear = document.querySelectorAll(".crear");
 //modales
 const modalLogin = new bootstrap.Modal(document.getElementById("modalLogin"), {
     keyboard: false,
@@ -23,64 +25,43 @@ const modalForm= new bootstrap.Modal(document.getElementById("modalFormulario"),
 });
 //para guardar userid cuando se logue
 let userid;
-
+//contenido formularios modales
+const contenidoLogin = document.getElementById("contenidoModalLogin");
+const contenidoFormAdd = document.getElementById("modalFormAdd");
+const mBodyFormulario = document.getElementById("mBodyFormulario");
 
 function Persona(id, nombre, fecha_nac, fecha_muerto, img, wiki, entidades, productos) {
     this.id = id;
-    this.nombre = nombre;
-    this.fecha_nac = fecha_nac;
-    this.fecha_def = fecha_muerto;
-    this.imagen = img;
-    this.wiki = wiki;
+    this.name = nombre;
+    this.birthDate = fecha_nac;
+    this.deathDate = fecha_muerto;
+    this.imageUrl = img;
+    this.wikiUrl = wiki;
     this.tipo = "personas";
-    this.entidades = entidades;
-    this.productos = productos;
+    this.entities = entidades;
+    this.products = productos;
 }
 
 function Entidad(id, nombre, fecha_inic, fecha_fin, img, wiki, personas, productos) {
     this.id = id;
-    this.nombre = nombre;
-    this.fecha_nac = fecha_inic;
-    this.fecha_def = fecha_fin;
-    this.imagen = img;
-    this.wiki = wiki;
+    this.name = nombre;
+    this.birthDate = fecha_inic;
+    this.deathDate = fecha_fin;
+    this.imageUrl = img;
+    this.wikiUrl = wiki;
     this.tipo = "entidades";
-    this.personas = personas;
-    this.productos = productos;
+    this.persons = personas;
+    this.products = productos;
 }
 
 function Producto(id, nombre, fecha_inic, fecha_fin, img, wiki, personas, entidades) {
     this.id = id;
-    this.nombre = nombre;
-    this.fecha_nac = fecha_inic;
-    this.fecha_def = fecha_fin;
-    this.imagen = img;
-    this.wiki = wiki;
+    this.name = nombre;
+    this.birthDate = fecha_inic;
+    this.deathDate = fecha_fin;
+    this.imageUrl = img;
+    this.wikiUrl = wiki;
     this.tipo = "producto";
-    this.personas = personas;
-    this.entidades = entidades;
+    this.persons = personas;
+    this.entities = entidades;
 }
-
-function borrar(elem) {
-    let elemId = elem.parentNode.parentNode.id;
-    let borrarElem = localArray.map(function (item) {
-        return item.id;
-    }).indexOf(elemId);
-
-    document.getElementById(elemId).style.display = "none";
-    localArray.splice(borrarElem, 1);
-    console.log(localArray);
-    localStorage.setItem("cargaArray", JSON.stringify(localArray));
-}
-
-document.querySelectorAll(".borrar").forEach(item => {
-    item.addEventListener("click", function () {
-        borrar(this);
-    })
-});
-
-document.querySelectorAll(".editar").forEach(item => {
-    item.addEventListener("click", function () {
-        editar(this);
-    })
-});

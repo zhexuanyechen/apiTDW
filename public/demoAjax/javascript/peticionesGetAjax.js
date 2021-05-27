@@ -86,8 +86,8 @@ function cargarAjaxProd(){
 
 function cargarObjetos(id, objeto) {
     let htmlId = id;
-    htmlId.innerHTML += `<div id='${objeto.id}' class='card mb-3'><img src='${objeto.imagen}' class='card-img-top imagen'>
-        <div class='card-body'><h5 class='card-title text-center'>${objeto.nombre}</h5></div>
+    htmlId.innerHTML += `<div id='${objeto.id}' class='card mb-3'><img src='${objeto.imageUrl}' class='card-img-top imagen'>
+        <div class='card-body'><h5 class='card-title text-center'>${objeto.name}</h5></div>
         <div class='mb-2 botonesObjeto'><button type='button' class='btn red borrar'>Borrar</button>
         <button type='button' class='btn editar' data-bs-toggle='modal' data-bs-target='#modalFormulario'>Editar</button></div></div>`;
 }
@@ -95,6 +95,18 @@ function cargarObjetos(id, objeto) {
 $(document).ready(function(){
     cargarAjax();
 });
+
+/*function getObjetoConcretoAjax(authHeader, tipo, objetoId){
+    $.ajax({
+        type: 'GET',
+        url: `/api/v1/${tipo}/${objetoId}`,
+        headers: {"Authorization": authHeader},
+        success: function (data){
+            console.log(data);
+            cargarNuevo(tipo, data);
+        }
+    })
+}*/
 
 function showDescAjax(prodId, tipo){
     $.ajax({
@@ -108,37 +120,55 @@ function showDescAjax(prodId, tipo){
                 datosAux = data.entity;
             else if(tipo === "persons")
                 datosAux = data.person;
-
-            mBodyFormulario.innerHTML = "";
-            for(let atributo in datosAux){
-                if (atributo === "products" || atributo === "persons" || atributo === "entities") {
-                    let id = "lista" + atributo;
-                    mBodyFormulario.innerHTML += `<div class='mb-2'><h4>${atributo}</h4><ul class='datos' id='${id}'></ul></div>`;
-                    if(datosAux[atributo] === null){
-                        document.getElementById(id).innerText = "Sin relaciones";
-                    }else{
-                        for (let i = 0; i < datosAux[atributo].length; i++) {
-                            let aux = "";
-                            if (atributo === "products") {
-                                aux = arrayProductos.find(producto => producto.id.slice(0, -4) == datosAux[atributo][i]);
-                            }else if (atributo === "entities"){
-                                aux = arrayEntidades.find(entidad => entidad.id.slice(0, -4) == datosAux[atributo][i]);
-                            }else if (atributo === "persons"){
-                                aux = arrayPersonas.find(persona => persona.id.slice(0, -4) == datosAux[atributo][i]);
-                            }
-                            document.getElementById(id).innerHTML += `<li>${aux.nombre}</li>`;
-                        }
-                    }
-                } else if (atributo === "wikiUrl") {
-                    mBodyFormulario.innerHTML += `<div class='mb-2 wiki'><h4>${atributo}</h4><a href='${datosAux[atributo]}' class='datos' target='_blank'>${datosAux[atributo]}</a></div>`;
-                } else if (atributo !== "id"){
-                    mBodyFormulario.innerHTML += `<div class='mb-2'><h4>${atributo}</h4><p class='datos'>${datosAux[atributo]}</p></div>`;
-                }
-            }
+            descripcion(datosAux);
             modalForm.show();
         }
     });
 }
+function descripcion(datosAux){
+    let html =`<div class="modal-header">
+                   <h3 class="modal-title">Descripcion de ${datosAux.name}</h3>
+                   <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form class="modal-body">
+                  ${imprimirDesc(datosAux)}
+                </form>
+                <div id="mFooter2" class="modal-footer">
+                   <button type="button" class="btn red" data-bs-dismiss="modal">Cerrar</button>
+                </div>`;
+    contenidoFormAdd.innerHTML=html;
+}
+function imprimirDesc(datosAux){
+    let html='';
+    for(let atributo in datosAux){
+        if (atributo === "products" || atributo === "persons" || atributo === "entities") {
+            let id = "lista" + atributo;
+            html += `<div class='mb-2'><h4>${atributo}</h4><ul class='datos' id='${id}'>`;
+            if(datosAux[atributo] === null){
+                html += "Sin relaciones</ul></div>";
+            }else{
+                for (let i = 0; i < datosAux[atributo].length; i++) {
+                    let aux = "";
+                    if (atributo === "products") {
+                        aux = arrayProductos.find(producto => producto.id.slice(0, -4) == datosAux[atributo][i]);
+                    }else if (atributo === "entities"){
+                        aux = arrayEntidades.find(entidad => entidad.id.slice(0, -4) == datosAux[atributo][i]);
+                    }else if (atributo === "persons"){
+                        aux = arrayPersonas.find(persona => persona.id.slice(0, -4) == datosAux[atributo][i]);
+                    }
+                    html += `<li>${aux.name}</li>`;
+                }
+                html+="</ul></div>";
+            }
+        } else if (atributo === "wikiUrl") {
+            html += `<div class='mb-2 wiki'><h4>${atributo}</h4><a href='${datosAux[atributo]}' class='datos' target='_blank'>${datosAux[atributo]}</a></div>`;
+        } else if (atributo !== "id"){
+            html += `<div class='mb-2'><h4>${atributo}</h4><p class='datos'>${datosAux[atributo]}</p></div>`;
+        }
+    }
+    return html;
+}
+
 function addClickListener(selector, tipo){
     document.querySelectorAll(selector).forEach(item => {
         item.addEventListener("click", function (event) {
@@ -166,10 +196,13 @@ function rolUser(authHeader, username) {
                     showBtn();
                     console.log("Es writer");
                     userid=usuarioEncontrado.user.id;
+                    botonBorrar();
+                    botonEditar();
                 }else if(usuarioEncontrado != null && usuarioEncontrado.user.role !== "writer"){
                     sessionStorage.setItem("logueado", "true");
                     sessionStorage.setItem("role", "reader");
                     console.log("Es reader");
+                    showBtn();
                     userid=usuarioEncontrado.user.id;
                 }else{
                     console.log("no se ha encontrado");
@@ -191,6 +224,12 @@ function showBtn() {
         logoutbtn.style.display = "inline-block";
         signupbtn.style.display = "none";
         documento.style.setProperty("--displayCrear", "block");
+        botonesCrear.forEach((botonCrear)=>{
+            botonCrear.addEventListener("click", (e)=>{
+                console.log(e.target.id);
+                crear(e.target.id);
+            });
+        });
     } else {
         for (let i = 0; i < displaybtn.length; i++) {
             displaybtn[i].style.display = "none";
@@ -235,7 +274,7 @@ loginbtn.addEventListener("click", ()=>{
                         </div>
                      </form>
                 `;
-    document.getElementById("contenidoModalLogin").innerHTML=html;
+    contenidoLogin.innerHTML=html;
     $("#login").click((e)=>{
         e.preventDefault();
         login();
@@ -248,7 +287,7 @@ signupbtn.addEventListener("click", ()=>{
                         <h3 class="modal-title">Sign up</h3>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <form class="modal-body">
+                    <form id="signupForm" class="modal-body">
                         <div class="mb-2">
                             <img class="loginImg" src="iconos/user.png" class="me-2">
                         </div>
@@ -266,11 +305,62 @@ signupbtn.addEventListener("click", ()=>{
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn red" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" id="signup" class="btn loginbtn"><img
+                            <button type="submit" id="signup" class="btn loginbtn" disabled><img
                                     src="iconos/user.png" class="me-2">Sign up</button>
                         </div>
+                        <p id="pError">No hay errores</p>
                     </form>`;
-    document.getElementById("contenidoModalLogin").innerHTML=html;
+    contenidoLogin.innerHTML=html;
+    document.querySelectorAll("#signupForm input").forEach(function (input) {
+        input.addEventListener("keyup", ()=>{
+            validacionFormulario(document.querySelectorAll("#signupForm input"), document.getElementById("signup"));
+        });
+    });
+    $("#signup").click((e)=>{
+        e.preventDefault();
+        signup();
+    });
+    modalLogin.show();
+});
+
+editarbtn.addEventListener("click", ()=>{
+    let html=`<div class="modal-header">
+                        <h3 class="modal-title">Sign up</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form id="signupForm" class="modal-body">
+                        <div class="mb-2">
+                            <img class="loginImg" src="iconos/user.png" class="me-2">
+                        </div>
+                        <div class="mb-2">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="text" class="form-control" placeholder="Email" id="email">
+                        </div>
+                        <div class="mb-2">
+                            <label for="usuario" class="form-label">Usuario</label>
+                            <input type="text" class="form-control" placeholder="Usuario" id="usuario">
+                        </div>
+                        <div class="mb-2">
+                            <label for="pwd" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" placeholder="Contraseña" id="pwd">
+                        </div>
+                        <div class="mb-2">
+                            <label for="fechanac" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" placeholder="Fecha nacimiento" id="fechanac">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn red" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="submit" id="signup" class="btn loginbtn" disabled><img
+                                    src="iconos/user.png" class="me-2">Sign up</button>
+                        </div>
+                        <p id="pError">No hay errores</p>
+                    </form>`;
+    contenidoLogin.innerHTML=html;
+    document.querySelectorAll("#signupForm input").forEach(function (input) {
+        input.addEventListener("keyup", ()=>{
+            validacionFormulario(document.querySelectorAll("#signupForm input"), document.getElementById("signup"));
+        });
+    });
     $("#signup").click((e)=>{
         e.preventDefault();
         signup();
@@ -282,8 +372,7 @@ function signup(){
     let user = $("#usuario").val();
     let pwd = $("#pwd").val();
     let email = $("#email").val();
-    let dataString = "username="+user+"&email="+email+"&password="+pwd+"&role=reader";
-    console.log(dataString);
+
     $.ajax({
         type: "POST",
         url: "/api/v1/users",
@@ -291,13 +380,47 @@ function signup(){
         cache: false,
         success: function (data, textStatus){
             console.log(textStatus);
+            login();
             modalLogin.hide();
+        },
+        statusCode:{
+            400: function () {
+                document.getElementById("pError").innerText = "Ya existe este usuario o email";
+            }
         }
     });
 };
 
 function actualizarUser(){
+    let user = $("#usuario").val();
+    let pwd = $("#pwd").val();
+    let email = $("#email").val();
+    let fechanac = $("#fechanac").val();
+    let dataString = JSON.stringify({username: user, email: email, password:pwd, role:"reader", activo:"activo", fechanac:fechanac});
 
+    $.ajax({
+        type: "PUT",
+        url: "/api/v1/users/"+userid,
+        data: dataString,
+        cache: false,
+        success: function (data, textStatus){
+            modalLogin.hide();
+        }
+    });
+}
+
+function validacionFormulario(formulario, boton) {
+    let completado = 0;
+    formulario.forEach(function (input) {
+        if (input.value.trim() === "") {
+            boton.disabled = true;
+        } else {
+            completado++;
+        }
+    });
+    if (completado === 3) {
+        boton.disabled = false;
+    }
 }
 
 

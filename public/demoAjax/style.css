@@ -1,5 +1,5 @@
 :root {
-    --displayCrear: block;
+    --displayCrear: none;
 }
 
 body {
@@ -144,4 +144,13 @@ button>img {
         padding: 0.2em 1em;
         font-size: 1rem;
     }
+}
+
+#pError{
+    color: red;
+}
+
+.loginbtn:disabled{
+    background-color: lightgray;
+    border-color: gray;
 }

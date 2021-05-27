@@ -181,6 +181,7 @@ paths:
       security:
         - MiWApiSecurity:
             - reader
+            - writer
       requestBody:
         $ref: '#/components/requestBodies/UserRequestBody'
       responses:

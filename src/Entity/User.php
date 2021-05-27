@@ -91,6 +91,17 @@ class User implements JsonSerializable
     protected string $fechanac;
 
     /**
+     * @ORM\Column(
+     *     name     = "activo",
+     *     type     = "string",
+     *     length   = 30,
+     *     unique   = false,
+     *     nullable = true
+     *     )
+     */
+    protected string $activo;
+
+    /**
      * User constructor.
      *
      * @param string $username username
@@ -98,6 +109,7 @@ class User implements JsonSerializable
      * @param string $password password
      * @param string $role Role::ROLE_READER | Role::ROLE_WRITER
      * @param string $fechanac fechanac
+     * @param string $activo activo
      *
      * @throws UnexpectedValueException
      */
@@ -106,12 +118,14 @@ class User implements JsonSerializable
         string $email = '',
         string $password = '',
         string $fechanac = '',
+        string $activo = '',
         string $role = Role::ROLE_READER
     ) {
         $this->id       = 0;
         $this->username = $username;
         $this->email    = $email;
         $this->fechanac = $fechanac;
+        $this->activo = $activo;
         $this->setPassword($password);
         try {
             $this->setRole($role);
@@ -197,6 +211,29 @@ class User implements JsonSerializable
         $this->fechanac = $fechanac;
         return $this;
     }
+
+    /**
+     * Get activo
+     *
+     * @return string
+     */
+    public function getActivo(): string
+    {
+        return $this->activo;
+    }
+
+    /**
+     * Set activo
+     *
+     * @param string $activo activo
+     * @return User
+     */
+    public function setActivo(string $activo): self
+    {
+        $this->activo = $activo;
+        return $this;
+    }
+
     /**
      * @param string $role [ Role::ROLE_READER | Role::ROLE_WRITER ]
      * @throws UnexpectedValueException

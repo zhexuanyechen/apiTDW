@@ -1,5 +1,4 @@
 let elemId, indiceElem, objetoEditar;
-const mBodyFormulario = document.getElementById("mBodyFormulario");
 let localArray = JSON.parse(localStorage.getItem("cargaArray"));
 const tituloForm = document.getElementById("modalFormTitulo");
 
