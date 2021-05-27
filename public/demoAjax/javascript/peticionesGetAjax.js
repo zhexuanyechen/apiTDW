@@ -37,6 +37,7 @@ function cargarAjaxEntidades(){
         type: "GET",
         url: '/api/v1/entities',
         success: function (datos) {
+            entidadesId.innerHTML="";
             datos.entities.forEach((entidad)=>{
                 let entityAux = entidad.entity;
                 let nuevaEnt = new Entidad(entityAux.id + "enti", entityAux.name, entityAux.birthDate, entityAux.deathDate,
@@ -49,11 +50,12 @@ function cargarAjaxEntidades(){
     });
 }
 
-function  cargarAjaxPersonas(){
+function cargarAjaxPersonas(){
     $.ajax({
         type: "GET",
         url: '/api/v1/persons',
         success: function (data) {
+            personasId.innerHTML="";
             data.persons.forEach((persona)=>{
                 let personAux = persona.person;
                 let nuevaPersona = new Persona(personAux.id + "pers", personAux.name, personAux.birthDate, personAux.deathDate,
@@ -62,6 +64,7 @@ function  cargarAjaxPersonas(){
                 addClickListener("#personasCol .imagen", "persons");
                 arrayPersonas.push(nuevaPersona);
             });
+            console.log("he terminado");
         }
     });
 }
@@ -71,7 +74,7 @@ function cargarAjaxProd(){
         type: "GET",
         url: '/api/v1/products',
         success: function (data) {
-            $('#products').html(JSON.stringify(data));
+            productosId.innerHTML="";
             data.products.forEach((producto)=>{
                 let prodAux = producto.product;
                 let nuevoProd = new Producto(prodAux.id + "prod", prodAux.name, prodAux.birthDate, prodAux.deathDate,
@@ -95,18 +98,6 @@ function cargarObjetos(id, objeto) {
 $(document).ready(function(){
     cargarAjax();
 });
-
-/*function getObjetoConcretoAjax(authHeader, tipo, objetoId){
-    $.ajax({
-        type: 'GET',
-        url: `/api/v1/${tipo}/${objetoId}`,
-        headers: {"Authorization": authHeader},
-        success: function (data){
-            console.log(data);
-            cargarNuevo(tipo, data);
-        }
-    })
-}*/
 
 function showDescAjax(prodId, tipo){
     $.ajax({
@@ -215,7 +206,7 @@ function showBtn() {
     let displaybtn = document.getElementsByClassName("botonesObjeto");
     let logueado = sessionStorage.getItem("logueado");
     let role = sessionStorage.getItem("role");
-
+    console.log(role);
     if (logueado === "true" && role === "writer") {
         for (let i = 0; i < displaybtn.length; i++) {
             displaybtn[i].style.display = "flex";

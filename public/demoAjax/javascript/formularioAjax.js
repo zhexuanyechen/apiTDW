@@ -70,6 +70,7 @@ function crearAjax(authHeader, url, id){
         headers: {"Authorization": authHeader},
         success: function (data){
             console.log(data);
+            console.log("Se ha creado");
             if (id === "btnProducto") {
                 cargarNuevo("products", data.product);
                 addClickListener("#productosCol .imagen", "products");
@@ -161,11 +162,41 @@ function botonEditar(){
     });
 }
 
-function editarAjax(){
+async function guardarEditarAjax(authHeader, editarId, tipo, etag){
+    let name = $("#name").val();
+    let birthDate = $("#birthDate").val();
+    let deathDate = $("#deathDate").val();
+    let imageUrl = $("#imageUrl").val();
+    let wikiUrl = $("#wikiUrl").val();
+    let data = {
+        name: name,
+        birthDate: birthDate,
+        deathDate: deathDate,
+        imageUrl: imageUrl,
+        wikiUrl: wikiUrl,
+        etag: etag
+    };
 
+   $.ajax({
+        type: "PUT",
+        url: `/api/v1/${tipo}/${editarId}`,
+        headers: {"Authorization": authHeader, "If-Match": etag},
+        data: data,
+        success: function () {
+            console.log("Se ha editado");
+            if (tipo === "persons") {
+                cargarAjaxPersonas();
+            } else if (tipo === "entities") {
+                cargarAjaxEntidades();
+            } else if (tipo === "products") {
+                cargarAjaxProd();
+            }
+            modalForm.hide();
+        }
+    })
 }
 
-function editar(objetoEditar){
+function editar(objetoEditar, editar, etag){
     let html =`<div class="modal-header">
                    <h3 class="modal-title">Editar</h3>
                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -178,6 +209,10 @@ function editar(objetoEditar){
                    <button type="submit" id="guardarCambios" class="btn loginbtn"> Guardar cambios</button>
                 </div>`;
     contenidoFormAdd.innerHTML=html;
+    document.getElementById("guardarCambios").addEventListener("click", (e)=>{
+        e.preventDefault();
+        guardarEditarAjax(authHeader, objetoEditar.id, editar, etag);
+    })
 }
 
 function showEditarAjax(authHeader, prodId, tipo){
@@ -185,8 +220,10 @@ function showEditarAjax(authHeader, prodId, tipo){
         type: "GET",
         url: `/api/v1/${tipo}/${prodId}`,
         headers: {"Authorization": authHeader},
-        success: function (data) {
+        success: function (data, textStatus, request) {
             console.log(data);
+            console.log(request.getResponseHeader("etag"));
+            let etag = request.getResponseHeader("etag");
             let datosAux = "";
             if(tipo === "products")
                 datosAux = data.product;
@@ -194,8 +231,9 @@ function showEditarAjax(authHeader, prodId, tipo){
                 datosAux = data.entity;
             else if(tipo === "persons")
                 datosAux = data.person;
-            editar(datosAux);
+            editar(datosAux, tipo, etag);
             modalForm.show();
         }
     });
 }
+

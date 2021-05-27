@@ -154,3 +154,7 @@ button>img {
     background-color: lightgray;
     border-color: gray;
 }
+
+h4{
+    text-transform: capitalize;
+}
