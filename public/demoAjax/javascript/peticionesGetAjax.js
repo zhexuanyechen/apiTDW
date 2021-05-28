@@ -1,13 +1,13 @@
-function login(){
+function login() {
     let user = $("#usuario").val();
     let pwd = $("#pwd").val();
-    let dataString = "username="+user+"&password="+pwd;
+    let dataString = "username=" + user + "&password=" + pwd;
     $.ajax({
         type: "POST",
         url: "/access_token",
         data: dataString,
         cache: false,
-        success: function (data, textStatus, request){
+        success: function (data, textStatus, request) {
             authHeader = request.getResponseHeader('Authorization');
             console.log("holiwi");
             rolUser(authHeader, user);
@@ -31,13 +31,13 @@ function cargarAjax() {
     cargarAjaxEntidades();
 }
 
-function cargarAjaxEntidades(){
+function cargarAjaxEntidades() {
     $.ajax({
         type: "GET",
         url: '/api/v1/entities',
         success: function (datos) {
-            entidadesId.innerHTML="";
-            datos.entities.forEach((entidad)=>{
+            entidadesId.innerHTML = "";
+            datos.entities.forEach((entidad) => {
                 let entityAux = entidad.entity;
                 let nuevaEnt = new Entidad(entityAux.id + "enti", entityAux.name, entityAux.birthDate, entityAux.deathDate,
                     entityAux.imageUrl, entityAux.wikiUrl, entityAux.persons, entityAux.products);
@@ -50,13 +50,13 @@ function cargarAjaxEntidades(){
     });
 }
 
-function cargarAjaxPersonas(){
+function cargarAjaxPersonas() {
     $.ajax({
         type: "GET",
         url: '/api/v1/persons',
         success: function (data) {
-            personasId.innerHTML="";
-            data.persons.forEach((persona)=>{
+            personasId.innerHTML = "";
+            data.persons.forEach((persona) => {
                 let personAux = persona.person;
                 let nuevaPersona = new Persona(personAux.id + "pers", personAux.name, personAux.birthDate, personAux.deathDate,
                     personAux.imageUrl, personAux.wikiUrl, personAux.entities, personAux.products);
@@ -69,13 +69,13 @@ function cargarAjaxPersonas(){
     });
 }
 
-function cargarAjaxProd(){
+function cargarAjaxProd() {
     $.ajax({
         type: "GET",
         url: '/api/v1/products',
         success: function (data) {
-            productosId.innerHTML="";
-            data.products.forEach((producto)=>{
+            productosId.innerHTML = "";
+            data.products.forEach((producto) => {
                 let prodAux = producto.product;
                 let nuevoProd = new Producto(prodAux.id + "prod", prodAux.name, prodAux.birthDate, prodAux.deathDate,
                     prodAux.imageUrl, prodAux.wikiUrl, prodAux.persons, prodAux.entities);
@@ -95,21 +95,21 @@ function cargarObjetos(id, objeto) {
         <button type='button' class='btn editar' data-bs-toggle='modal' data-bs-target='#modalFormulario'>Editar</button></div></div>`;
 }
 
-$(document).ready(function(){
+$(document).ready(function () {
     cargarAjax();
 });
 
-function showDescAjax(prodId, tipo){
+function showDescAjax(prodId, tipo) {
     $.ajax({
         type: "GET",
         url: `/api/v1/${tipo}/${prodId}`,
         success: function (data) {
             let datosAux = "";
-            if(tipo === "products")
+            if (tipo === "products")
                 datosAux = data.product;
-            else if(tipo === "entities")
+            else if (tipo === "entities")
                 datosAux = data.entity;
-            else if(tipo === "persons")
+            else if (tipo === "persons")
                 datosAux = data.person;
             descripcion(datosAux);
             modalForm.show();
@@ -117,8 +117,8 @@ function showDescAjax(prodId, tipo){
     });
 }
 
-function descripcion(datosAux){
-    let html =`<div class="modal-header">
+function descripcion(datosAux) {
+    let html = `<div class="modal-header">
                    <h3 class="modal-title">Descripcion de ${datosAux.name}</h3>
                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -128,40 +128,47 @@ function descripcion(datosAux){
                 <div id="mFooter2" class="modal-footer">
                    <button type="button" class="btn red" data-bs-dismiss="modal">Cerrar</button>
                 </div>`;
-    contenidoFormAdd.innerHTML=html;
+    contenidoFormAdd.innerHTML = html;
 }
-function imprimirDesc(datosAux){
-    let html='';
-    for(let atributo in datosAux){
+
+function imprimirDesc(datosAux) {
+    let html = '';
+    for (let atributo in datosAux) {
         if (atributo === "products" || atributo === "persons" || atributo === "entities") {
             let id = "lista" + atributo;
             html += `<div class='mb-2'><h4>${atributo}</h4><ul class='datos' id='${id}'>`;
-            if(datosAux[atributo] === null){
-                html += "Sin relaciones</ul></div>";
-            }else{
-                for (let i = 0; i < datosAux[atributo].length; i++) {
-                    let aux = "";
-                    if (atributo === "products") {
-                        aux = arrayProductos.find(producto => producto.id.slice(0, -4) == datosAux[atributo][i]);
-                    }else if (atributo === "entities"){
-                        aux = arrayEntidades.find(entidad => entidad.id.slice(0, -4) == datosAux[atributo][i]);
-                    }else if (atributo === "persons"){
-                        aux = arrayPersonas.find(persona => persona.id.slice(0, -4) == datosAux[atributo][i]);
-                    }
-                    html += `<li>${aux.name}</li>`;
-                }
-                html+="</ul></div>";
-            }
+            html += imprimirRelaciones(datosAux[atributo], atributo);
         } else if (atributo === "wikiUrl") {
             html += `<div class='mb-2 wiki'><h4>${atributo}</h4><a href='${datosAux[atributo]}' class='datos' target='_blank'>${datosAux[atributo]}</a></div>`;
-        } else if (atributo !== "id"){
+        } else if (atributo !== "id") {
             html += `<div class='mb-2'><h4>${atributo}</h4><p class='datos'>${datosAux[atributo]}</p></div>`;
         }
     }
     return html;
 }
 
-function addClickListener(selector, tipo){
+function imprimirRelaciones(arrayRel, atributo) {
+    let html = "";
+    if (arrayRel === null) {
+        html += "Sin relaciones</ul></div>";
+    } else {
+        for (let i = 0; i < arrayRel.length; i++) {
+            let aux = "";
+            if (atributo === "products") {
+                aux = arrayProductos.find(producto => producto.id.slice(0, -4) == arrayRel[i]);
+            } else if (atributo === "entities") {
+                aux = arrayEntidades.find(entidad => entidad.id.slice(0, -4) == arrayRel[i]);
+            } else if (atributo === "persons") {
+                aux = arrayPersonas.find(persona => persona.id.slice(0, -4) == arrayRel[i]);
+            }
+            html += `<li>${aux.name}</li>`;
+        }
+        html += "</ul></div>";
+    }
+    return html;
+}
+
+function addClickListener(selector, tipo) {
     document.querySelectorAll(selector).forEach(item => {
         item.addEventListener("click", function (event) {
             let prodId = event.target.parentNode.id;
@@ -180,26 +187,26 @@ function rolUser(authHeader, username) {
         url: '/api/v1/users',
         headers: {"Authorization": authHeader},
         success: function (data) {
-            editarbtn.style.display="inline-block";
+            editarbtn.style.display = "inline-block";
             let usuarioEncontrado = data.users.find(usuario => usuario.user.username === username);
             usuarioLogueado = usuarioEncontrado.user;
-                if(usuarioEncontrado != null && usuarioEncontrado.user.role === "writer"){
-                    sessionStorage.setItem("logueado", "true");
-                    sessionStorage.setItem("role", "writer");
-                    showBtn();
-                    console.log("Es writer");
-                    userid=usuarioEncontrado.user.id;
-                    getEtagUser(authHeader);
-                }else if(usuarioEncontrado != null && usuarioEncontrado.user.role !== "writer"){
-                    sessionStorage.setItem("logueado", "true");
-                    sessionStorage.setItem("role", "reader");
-                    console.log("Es reader");
-                    showBtn();
-                    userid=usuarioEncontrado.user.id;
-                    getEtagUser(authHeader);
-                }else{
-                    console.log("no se ha encontrado");
-                }
+            if (usuarioEncontrado != null && usuarioEncontrado.user.role === "writer") {
+                sessionStorage.setItem("logueado", "true");
+                sessionStorage.setItem("role", "writer");
+                showBtn();
+                console.log("Es writer");
+                userid = usuarioEncontrado.user.id;
+                getEtagUser(authHeader);
+            } else if (usuarioEncontrado != null && usuarioEncontrado.user.role !== "writer") {
+                sessionStorage.setItem("logueado", "true");
+                sessionStorage.setItem("role", "reader");
+                console.log("Es reader");
+                showBtn();
+                userid = usuarioEncontrado.user.id;
+                getEtagUser(authHeader);
+            } else {
+                console.log("no se ha encontrado");
+            }
         }
     })
 }
@@ -209,13 +216,13 @@ function showBtn() {
     let logueado = sessionStorage.getItem("logueado");
     let role = sessionStorage.getItem("role");
     console.log(role);
-    if (logueado === "true" ) {
+    if (logueado === "true") {
         loginbtn.style.display = "none";
         logoutbtn.style.display = "inline-block";
         signupbtn.style.display = "none";
         editarbtn.style.display = "inline-block";
         botonEditarUser();
-        if(role === "writer"){
+        if (role === "writer") {
             for (let i = 0; i < displaybtn.length; i++) {
                 displaybtn[i].style.display = "flex";
             }
@@ -243,8 +250,8 @@ function logout() {
 
 logoutbtn.addEventListener("click", logout);
 
-loginbtn.addEventListener("click", ()=>{
-        let html =`  <div class="modal-header">
+loginbtn.addEventListener("click", () => {
+    let html = `  <div class="modal-header">
                             <h3 class="modal-title">Login</h3>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                      </div>
@@ -267,16 +274,16 @@ loginbtn.addEventListener("click", ()=>{
                         </div>
                      </form>
                 `;
-    contenidoLogin.innerHTML=html;
-    $("#login").click((e)=>{
+    contenidoLogin.innerHTML = html;
+    $("#login").click((e) => {
         e.preventDefault();
         login();
     });
     modalLogin.show();
 });
 
-signupbtn.addEventListener("click", ()=>{
-    let html=`<div class="modal-header">
+signupbtn.addEventListener("click", () => {
+    let html = `<div class="modal-header">
                         <h3 class="modal-title">Sign up</h3>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
@@ -303,20 +310,20 @@ signupbtn.addEventListener("click", ()=>{
                         </div>
                         <p id="pError"></p>
                     </form>`;
-    contenidoLogin.innerHTML=html;
+    contenidoLogin.innerHTML = html;
     document.querySelectorAll("#signupForm input").forEach(function (input) {
-        input.addEventListener("keyup", ()=>{
+        input.addEventListener("keyup", () => {
             validacionFormulario(document.querySelectorAll("#signupForm input"), document.getElementById("signup"));
         });
     });
-    $("#signup").click((e)=>{
+    $("#signup").click((e) => {
         e.preventDefault();
         signup();
     });
     modalLogin.show();
 });
 
-function signup(){
+function signup() {
     let user = $("#usuario").val();
     let pwd = $("#pwd").val();
     let email = $("#email").val();
@@ -324,14 +331,14 @@ function signup(){
     $.ajax({
         type: "POST",
         url: "/api/v1/users",
-        data: {username: user, email: email, password:pwd, role:"reader", fechanac: "", activo: "activo"},
+        data: {username: user, email: email, password: pwd, role: "reader", fechanac: "", activo: "activo"},
         cache: false,
-        success: function (data){
+        success: function (data) {
             console.log(data);
             login();
             modalLogin.hide();
         },
-        statusCode:{
+        statusCode: {
             400: function () {
                 document.getElementById("pError").innerText = "Ya existe este usuario o email";
             }

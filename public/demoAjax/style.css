@@ -29,11 +29,11 @@ a:hover {
     font-weight: bold;
 }
 
-button>img {
+button > img {
     width: 1.4rem;
 }
 
-.card>img {
+.card > img {
     width: 75%;
     height: 17.5vw;
     object-fit: cover;
@@ -59,6 +59,16 @@ button>img {
 .crear {
     border-color: #339966;
     background-color: #d8f3e5;
+}
+
+.btnRel {
+    border: 2px solid #339966;
+    border-radius: 4px;
+    color: black;
+    box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+    padding: 0.2em 1.5em;
+    background-color: #d8f3e5;
+    margin-top: 4px;
 }
 
 .red {
@@ -102,7 +112,8 @@ button>img {
     flex-direction: row;
     justify-content: space-around;
 }
-#editUser{
+
+#editUser {
     display: none;
 }
 
@@ -129,7 +140,7 @@ button>img {
 }
 
 @media only screen and (max-width: 768px) {
-    .card>img {
+    .card > img {
         width: 100%;
         object-fit: contain;
     }
@@ -139,7 +150,7 @@ button>img {
     }
 }
 
-@media only screen and (max-width: 1000px) and (min-width:768px) {
+@media only screen and (max-width: 1000px) and (min-width: 768px) {
     .red,
     .editar,
     .loginbtn {
@@ -148,15 +159,15 @@ button>img {
     }
 }
 
-#pError{
+#pError {
     color: red;
 }
 
-.loginbtn:disabled{
+.loginbtn:disabled {
     background-color: lightgray;
     border-color: gray;
 }
 
-h4{
+h4 {
     text-transform: capitalize;
 }

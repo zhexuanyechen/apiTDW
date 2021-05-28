@@ -1,7 +1,7 @@
-function cargarForm(objetoF){
+function cargarForm(objetoF) {
     let html = "";
     for (let atributo in objetoF) {
-        let htmlAux="";
+        let htmlAux = "";
         if (atributo === "name") {
             html += "<div class='mb-2'><label for='name' class='form-label'>Nombre</label>" +
                 "<input type='text' class='form-control' value='" + objetoF[atributo] + "' id='name' required></div>";
@@ -11,47 +11,48 @@ function cargarForm(objetoF){
         } else if (atributo === "wikiUrl" || atributo === "imageUrl") {
             html += "<div class='mb-2'><label for='" + atributo + "' class='form-label'>" + atributo + "</label>" +
                 "<input type='url' class='form-control' value='" + objetoF[atributo] + "' id='" + atributo + "' required></div>";
-        } else if(atributo==="products"){
-            console.log("Intentando imprimir checkboxes");
-            htmlAux=cargarCheckboxes(arrayProductos, "Productos relacionados");
-            html+=htmlAux;
-        } else if(atributo==="entities"){
-            htmlAux=cargarCheckboxes(arrayEntidades, "Entidades relacionadas");
-            html+=htmlAux;
-        } else if(atributo==="persons"){
-            htmlAux=cargarCheckboxes(arrayPersonas, "Personas relacionadas");
-            html+=htmlAux;
+        } else if (atributo === "products") {
+            htmlAux = cargarCheckboxes(arrayProductos, "Productos relacionados");
+            html += htmlAux;
+        } else if (atributo === "entities") {
+            htmlAux = cargarCheckboxes(arrayEntidades, "Entidades relacionadas");
+            html += htmlAux;
+        } else if (atributo === "persons") {
+            htmlAux = cargarCheckboxes(arrayPersonas, "Personas relacionadas");
+            html += htmlAux;
         }
     }
     return html;
 }
 
-function cargarCheckboxes(array, title){
-    let htmlAux = `<h4>${title}</h4>`;
-    for(let i=0; i<array.length; i++){
-        htmlAux+=`<div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="${array[i].id.slice(0, -4)}" id="${array[i].id+"Box"}">
-                      <label class="form-check-label" for="defaultCheck1">
-                        ${array[i].name}
-                      </label>
-                    </div>`
+function cargarCheckboxes(array, title) {
+    let htmlAux = `<h4>${title}</h4>
+                    <ul class="list-group">`;
+    for (let i = 0; i < array.length; i++) {
+        htmlAux += `<li class="list-group-item">${array[i].name}</li>`;
     }
+    htmlAux += "</ul>";
+    htmlAux += `<button type="button" class="btn btnRel">Añadir relación</button>`;
     return htmlAux;
 }
 
-function crear(id){
+function guardarCheckboxesAjax(select, id) {
+
+}
+
+function crear(id) {
     let objetoCrear, url;
     if (id === "btnProducto") {
         objetoCrear = new Producto("", "", "", "", "", [], []);
-        url='/api/v1/products';
+        url = '/api/v1/products';
     } else if (id === "btnEntidad") {
         objetoCrear = new Entidad("", "", "", "", "", [], []);
-        url='/api/v1/entities';
+        url = '/api/v1/entities';
     } else if (id === "btnPersona") {
         objetoCrear = new Persona("", "", "", "", "", [], []);
-        url='/api/v1/persons';
+        url = '/api/v1/persons';
     }
-    let html =`<div class="modal-header">
+    let html = `<div class="modal-header">
                    <h3 class="modal-title">Crear ${objetoCrear.tipo}</h3>
                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -65,23 +66,23 @@ function crear(id){
 
     contenidoFormAdd.innerHTML = html;
     modalForm.show();
-    document.getElementById("crearNuevo").addEventListener("click", (e)=>{
+    document.getElementById("crearNuevo").addEventListener("click", (e) => {
         e.preventDefault();
         crearAjax(authHeader, url, id);
         modalForm.hide();
     })
 }
 
-function botonCrear(){
-    botonesCrear.forEach((botonCrear)=>{
-        botonCrear.addEventListener("click", (e)=>{
+function botonCrear() {
+    botonesCrear.forEach((botonCrear) => {
+        botonCrear.addEventListener("click", (e) => {
             console.log(e.target.id);
             crear(e.target.id);
         });
     });
 }
 
-function crearAjax(authHeader, url, id){
+function crearAjax(authHeader, url, id) {
     let name = $("#name").val();
     let birthDate = $("#birthDate").val();
     let deathDate = $("#deathDate").val();
@@ -101,7 +102,7 @@ function crearAjax(authHeader, url, id){
         url: url,
         data: data,
         headers: {"Authorization": authHeader},
-        success: function (data){
+        success: function (data) {
             console.log(data);
             console.log("Se ha creado");
             if (id === "btnProducto") {
@@ -118,20 +119,20 @@ function crearAjax(authHeader, url, id){
     })
 }
 
-function cargarNuevo(tipo, objeto){
+function cargarNuevo(tipo, objeto) {
     let objetoAux;
     if (tipo === "products") {
-        objetoAux= new Producto(objeto.id + "prod", objeto.name, objeto.birthDate, objeto.deathDate,
+        objetoAux = new Producto(objeto.id + "prod", objeto.name, objeto.birthDate, objeto.deathDate,
             objeto.imageUrl, objeto.wikiUrl, objeto.persons, objeto.entities);
         cargarObjetos(productosId, objetoAux);
         arrayProductos.push(objeto);
     } else if (tipo === "entities") {
-        objetoAux= new Entidad(objeto.id + "enti", objeto.name, objeto.birthDate, objeto.deathDate,
+        objetoAux = new Entidad(objeto.id + "enti", objeto.name, objeto.birthDate, objeto.deathDate,
             objeto.imageUrl, objeto.wikiUrl, objeto.persons, objeto.products);
         cargarObjetos(entidadesId, objetoAux);
         arrayEntidades.push(objetoAux);
     } else if (tipo === "persons") {
-        objetoAux= new Persona(objeto.id + "pers", objeto.name, objeto.birthDate, objeto.deathDate,
+        objetoAux = new Persona(objeto.id + "pers", objeto.name, objeto.birthDate, objeto.deathDate,
             objeto.imageUrl, objeto.wikiUrl, objeto.entities, objeto.products);
         cargarObjetos(personasId, objetoAux);
         arrayPersonas.push(objeto)
@@ -139,55 +140,55 @@ function cargarNuevo(tipo, objeto){
     showBtn();
 }
 
-function borrarAjax(authHeader, url){
+function borrarAjax(authHeader, url) {
     $.ajax({
         type: "DELETE",
         url: url,
-        headers:{"Authorization": authHeader},
-        success:function (){
+        headers: {"Authorization": authHeader},
+        success: function () {
             console.log("Se ha borrado de la api");
         }
     })
 }
 
-function botonBorrar(){
-    document.querySelectorAll(".borrar").forEach((boton)=>{
-        boton.addEventListener("click", (e)=>{
+function botonBorrar() {
+    document.querySelectorAll(".borrar").forEach((boton) => {
+        boton.addEventListener("click", (e) => {
             e.preventDefault();
-            let id=e.target.parentNode.parentNode.id;
-            let idBorrar=id.substring(0, id.length-4);
-            let tipoBorrar=id.substring(id.length-4, id.length);
+            let id = e.target.parentNode.parentNode.id;
+            let idBorrar = id.substring(0, id.length - 4);
+            let tipoBorrar = id.substring(id.length - 4, id.length);
 
             if (tipoBorrar === "prod") {
-                borrarAjax(authHeader, "/api/v1/products/"+idBorrar);
+                borrarAjax(authHeader, "/api/v1/products/" + idBorrar);
                 indexBorrarArray(arrayProductos, id);
             } else if (tipoBorrar === "enti") {
-                borrarAjax(authHeader, "/api/v1/entities/"+idBorrar);
+                borrarAjax(authHeader, "/api/v1/entities/" + idBorrar);
                 indexBorrarArray(arrayEntidades, id);
             } else if (tipoBorrar === "pers") {
-                borrarAjax(authHeader, "/api/v1/persons/"+idBorrar);
+                borrarAjax(authHeader, "/api/v1/persons/" + idBorrar);
                 indexBorrarArray(arrayPersonas, id);
             }
-            let elem=document.getElementById(id);
+            let elem = document.getElementById(id);
             elem.parentNode.removeChild(elem);
         });
     });
 }
 
 
-function indexBorrarArray(array, idBorrar){
-    let index = array.findIndex(objeto =>objeto.id ===idBorrar);
+function indexBorrarArray(array, idBorrar) {
+    let index = array.findIndex(objeto => objeto.id === idBorrar);
     array.splice(index, 1);
     console.log(array);
 }
 
-function botonEditar(){
-    document.querySelectorAll(".editar").forEach((boton)=>{
-        boton.addEventListener("click", (e)=>{
+function botonEditar() {
+    document.querySelectorAll(".editar").forEach((boton) => {
+        boton.addEventListener("click", (e) => {
             e.preventDefault();
-            let id=e.target.parentNode.parentNode.id;
-            let idEditar=id.substring(0, id.length-4);
-            let tipoEditar=id.substring(id.length-4, id.length);
+            let id = e.target.parentNode.parentNode.id;
+            let idEditar = id.substring(0, id.length - 4);
+            let tipoEditar = id.substring(id.length - 4, id.length);
 
             if (tipoEditar === "prod") {
                 showEditarAjax(authHeader, idEditar, "products");
@@ -200,7 +201,7 @@ function botonEditar(){
     });
 }
 
-function guardarEditarAjax(authHeader, editarId, tipo, etag){
+function guardarEditarAjax(authHeader, editarId, tipo, etag) {
     let name = $("#name").val();
     let birthDate = $("#birthDate").val();
     let deathDate = $("#deathDate").val();
@@ -215,7 +216,7 @@ function guardarEditarAjax(authHeader, editarId, tipo, etag){
         etag: etag
     };
 
-   $.ajax({
+    $.ajax({
         type: "PUT",
         url: `/api/v1/${tipo}/${editarId}`,
         headers: {"Authorization": authHeader, "If-Match": etag},
@@ -224,12 +225,12 @@ function guardarEditarAjax(authHeader, editarId, tipo, etag){
             let dataAux;
             console.log("Se ha editado");
             if (tipo === "persons") {
-                dataAux=data.person;
+                dataAux = data.person;
                 console.log(dataAux);
-                let id=dataAux.id + "pers";
-                let elem=document.getElementById(id);
+                let id = dataAux.id + "pers";
+                let elem = document.getElementById(id);
                 elem.parentNode.removeChild(elem);
-                cargarObjetos(personasId, {id: id, name:dataAux.name, imageUrl:dataAux.imageUrl});
+                cargarObjetos(personasId, {id: id, name: dataAux.name, imageUrl: dataAux.imageUrl});
                 showBtn();
                 addClickListener("#personasCol .imagen", "persons");
             } else if (tipo === "entities") {
@@ -240,8 +241,9 @@ function guardarEditarAjax(authHeader, editarId, tipo, etag){
     })
 }
 
-function editar(objetoEditar, editar, etag){
-    let html =`<div class="modal-header">
+function editar(objetoEditar, editar, etag) {
+    console.log(objetoEditar);
+    let html = `<div class="modal-header">
                    <h3 class="modal-title">Editar</h3>
                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
@@ -252,14 +254,14 @@ function editar(objetoEditar, editar, etag){
                    <button type="button" class="btn red" data-bs-dismiss="modal">Cancelar</button>
                    <button type="submit" id="guardarCambios" class="btn loginbtn"> Guardar cambios</button>
                 </div>`;
-    contenidoFormAdd.innerHTML=html;
-    document.getElementById("guardarCambios").addEventListener("click", (e)=>{
+    contenidoFormAdd.innerHTML = html;
+    document.getElementById("guardarCambios").addEventListener("click", (e) => {
         e.preventDefault();
         guardarEditarAjax(authHeader, objetoEditar.id, editar, etag);
     })
 }
 
-function showEditarAjax(authHeader, prodId, tipo){
+function showEditarAjax(authHeader, prodId, tipo) {
     $.ajax({
         type: "GET",
         url: `/api/v1/${tipo}/${prodId}`,
@@ -269,11 +271,11 @@ function showEditarAjax(authHeader, prodId, tipo){
             console.log(request.getResponseHeader("etag"));
             let etag = request.getResponseHeader("etag");
             let datosAux = "";
-            if(tipo === "products")
+            if (tipo === "products")
                 datosAux = data.product;
-            else if(tipo === "entities")
+            else if (tipo === "entities")
                 datosAux = data.entity;
-            else if(tipo === "persons")
+            else if (tipo === "persons")
                 datosAux = data.person;
             editar(datosAux, tipo, etag);
             modalForm.show();
