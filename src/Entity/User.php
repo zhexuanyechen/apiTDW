@@ -191,7 +191,7 @@ class User implements JsonSerializable
         return $this->role->hasRole($role);
     }
     /**
-     * Get username
+     * Get fechanac
      *
      * @return string
      */
@@ -201,7 +201,7 @@ class User implements JsonSerializable
     }
 
     /**
-     * Set username
+     * Set fechanac
      *
      * @param string $fechanac fechanac
      * @return User
@@ -326,6 +326,8 @@ class User implements JsonSerializable
                 'username' => $this->getUsername(),
                 'email' => $this->getEmail(),
                 'role' => $this->role->__toString(),
+                'fechanac' => $this->getFechaNac(),
+                'activo' => $this->getActivo()
             ]
         ];
     }

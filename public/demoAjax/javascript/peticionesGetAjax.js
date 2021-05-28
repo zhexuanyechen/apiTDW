@@ -181,20 +181,20 @@ function rolUser(authHeader, username) {
             editarbtn.style.display="inline-block";
             let usuarioEncontrado = data.users.find(usuario => usuario.user.username === username);
             usuarioLogueado = usuarioEncontrado.user;
-            console.log(usuarioEncontrado.user);
-            console.log(usuarioLogueado);
                 if(usuarioEncontrado != null && usuarioEncontrado.user.role === "writer"){
                     sessionStorage.setItem("logueado", "true");
                     sessionStorage.setItem("role", "writer");
                     showBtn();
                     console.log("Es writer");
                     userid=usuarioEncontrado.user.id;
+                    getEtagUser(authHeader);
                 }else if(usuarioEncontrado != null && usuarioEncontrado.user.role !== "writer"){
                     sessionStorage.setItem("logueado", "true");
                     sessionStorage.setItem("role", "reader");
                     console.log("Es reader");
                     showBtn();
                     userid=usuarioEncontrado.user.id;
+                    getEtagUser(authHeader);
                 }else{
                     console.log("no se ha encontrado");
                 }
