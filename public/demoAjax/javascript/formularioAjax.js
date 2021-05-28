@@ -1,6 +1,7 @@
 function cargarForm(objetoF){
     let html = "";
     for (let atributo in objetoF) {
+        let htmlAux="";
         if (atributo === "name") {
             html += "<div class='mb-2'><label for='name' class='form-label'>Nombre</label>" +
                 "<input type='text' class='form-control' value='" + objetoF[atributo] + "' id='name' required></div>";
@@ -10,9 +11,32 @@ function cargarForm(objetoF){
         } else if (atributo === "wikiUrl" || atributo === "imageUrl") {
             html += "<div class='mb-2'><label for='" + atributo + "' class='form-label'>" + atributo + "</label>" +
                 "<input type='url' class='form-control' value='" + objetoF[atributo] + "' id='" + atributo + "' required></div>";
+        } else if(atributo==="products"){
+            console.log("Intentando imprimir checkboxes");
+            htmlAux=cargarCheckboxes(arrayProductos, "Productos relacionados");
+            html+=htmlAux;
+        } else if(atributo==="entities"){
+            htmlAux=cargarCheckboxes(arrayEntidades, "Entidades relacionadas");
+            html+=htmlAux;
+        } else if(atributo==="persons"){
+            htmlAux=cargarCheckboxes(arrayPersonas, "Personas relacionadas");
+            html+=htmlAux;
         }
     }
     return html;
+}
+
+function cargarCheckboxes(array, title){
+    let htmlAux = `<h4>${title}</h4>`;
+    for(let i=0; i<array.length; i++){
+        htmlAux+=`<div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="${array[i].id.slice(0, -4)}" id="${array[i].id+"Box"}">
+                      <label class="form-check-label" for="defaultCheck1">
+                        ${array[i].name}
+                      </label>
+                    </div>`
+    }
+    return htmlAux;
 }
 
 function crear(id){
@@ -136,21 +160,27 @@ function botonBorrar(){
 
             if (tipoBorrar === "prod") {
                 borrarAjax(authHeader, "/api/v1/products/"+idBorrar);
+                indexBorrarArray(arrayProductos, id);
             } else if (tipoBorrar === "enti") {
                 borrarAjax(authHeader, "/api/v1/entities/"+idBorrar);
+                indexBorrarArray(arrayEntidades, id);
             } else if (tipoBorrar === "pers") {
                 borrarAjax(authHeader, "/api/v1/persons/"+idBorrar);
+                indexBorrarArray(arrayPersonas, id);
             }
             let elem=document.getElementById(id);
             elem.parentNode.removeChild(elem);
         });
     });
 }
-function borrarDeArray(array, id){
-    return array.filter(function(object){
-        return object.id != id;
-    })
+
+
+function indexBorrarArray(array, idBorrar){
+    let index = array.findIndex(objeto =>objeto.id ===idBorrar);
+    array.splice(index, 1);
+    console.log(array);
 }
+
 function botonEditar(){
     document.querySelectorAll(".editar").forEach((boton)=>{
         boton.addEventListener("click", (e)=>{

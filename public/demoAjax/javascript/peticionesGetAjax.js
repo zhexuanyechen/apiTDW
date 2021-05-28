@@ -43,6 +43,7 @@ function cargarAjaxEntidades(){
                     entityAux.imageUrl, entityAux.wikiUrl, entityAux.persons, entityAux.products);
                 cargarObjetos(entidadesId, nuevaEnt);
                 addClickListener("#entidadesCol .imagen", "entities");
+                console.log(nuevaEnt);
                 arrayEntidades.push(nuevaEnt);
             });
         }
@@ -115,6 +116,7 @@ function showDescAjax(prodId, tipo){
         }
     });
 }
+
 function descripcion(datosAux){
     let html =`<div class="modal-header">
                    <h3 class="modal-title">Descripcion de ${datosAux.name}</h3>
