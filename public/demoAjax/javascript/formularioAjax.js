@@ -48,6 +48,15 @@ function crear(id){
     })
 }
 
+function botonCrear(){
+    botonesCrear.forEach((botonCrear)=>{
+        botonCrear.addEventListener("click", (e)=>{
+            console.log(e.target.id);
+            crear(e.target.id);
+        });
+    });
+}
+
 function crearAjax(authHeader, url, id){
     let name = $("#name").val();
     let birthDate = $("#birthDate").val();
@@ -93,12 +102,12 @@ function cargarNuevo(tipo, objeto){
         cargarObjetos(productosId, objetoAux);
         arrayProductos.push(objeto);
     } else if (tipo === "entities") {
-        objetoAux= new Entidad(objeto.id + "prod", objeto.name, objeto.birthDate, objeto.deathDate,
+        objetoAux= new Entidad(objeto.id + "enti", objeto.name, objeto.birthDate, objeto.deathDate,
             objeto.imageUrl, objeto.wikiUrl, objeto.persons, objeto.products);
         cargarObjetos(entidadesId, objetoAux);
         arrayEntidades.push(objetoAux);
     } else if (tipo === "persons") {
-        objetoAux= new Persona(objeto.id + "prod", objeto.name, objeto.birthDate, objeto.deathDate,
+        objetoAux= new Persona(objeto.id + "pers", objeto.name, objeto.birthDate, objeto.deathDate,
             objeto.imageUrl, objeto.wikiUrl, objeto.entities, objeto.products);
         cargarObjetos(personasId, objetoAux);
         arrayPersonas.push(objeto)
@@ -124,9 +133,6 @@ function botonBorrar(){
             let id=e.target.parentNode.parentNode.id;
             let idBorrar=id.substring(0, id.length-4);
             let tipoBorrar=id.substring(id.length-4, id.length);
-            console.log(id)
-            console.log(id.substring(0, id.length-4));
-            console.log(id.substring(id.length-4, id.length));
 
             if (tipoBorrar === "prod") {
                 borrarAjax(authHeader, "/api/v1/products/"+idBorrar);
@@ -135,11 +141,16 @@ function botonBorrar(){
             } else if (tipoBorrar === "pers") {
                 borrarAjax(authHeader, "/api/v1/persons/"+idBorrar);
             }
-            document.getElementById(id).style.display="none";
+            let elem=document.getElementById(id);
+            elem.parentNode.removeChild(elem);
         });
     });
 }
-
+function borrarDeArray(array, id){
+    return array.filter(function(object){
+        return object.id != id;
+    })
+}
 function botonEditar(){
     document.querySelectorAll(".editar").forEach((boton)=>{
         boton.addEventListener("click", (e)=>{
@@ -147,9 +158,6 @@ function botonEditar(){
             let id=e.target.parentNode.parentNode.id;
             let idEditar=id.substring(0, id.length-4);
             let tipoEditar=id.substring(id.length-4, id.length);
-            console.log(id);
-            console.log(id.substring(0, id.length-4));
-            console.log(id.substring(id.length-4, id.length));
 
             if (tipoEditar === "prod") {
                 showEditarAjax(authHeader, idEditar, "products");
@@ -162,7 +170,7 @@ function botonEditar(){
     });
 }
 
-async function guardarEditarAjax(authHeader, editarId, tipo, etag){
+function guardarEditarAjax(authHeader, editarId, tipo, etag){
     let name = $("#name").val();
     let birthDate = $("#birthDate").val();
     let deathDate = $("#deathDate").val();
@@ -182,14 +190,20 @@ async function guardarEditarAjax(authHeader, editarId, tipo, etag){
         url: `/api/v1/${tipo}/${editarId}`,
         headers: {"Authorization": authHeader, "If-Match": etag},
         data: data,
-        success: function () {
+        success: function (data) {
+            let dataAux;
             console.log("Se ha editado");
             if (tipo === "persons") {
-                cargarAjaxPersonas();
+                dataAux=data.person;
+                console.log(dataAux);
+                let id=dataAux.id + "pers";
+                let elem=document.getElementById(id);
+                elem.parentNode.removeChild(elem);
+                cargarObjetos(personasId, {id: id, name:dataAux.name, imageUrl:dataAux.imageUrl});
+                showBtn();
+                addClickListener("#personasCol .imagen", "persons");
             } else if (tipo === "entities") {
-                cargarAjaxEntidades();
             } else if (tipo === "products") {
-                cargarAjaxProd();
             }
             modalForm.hide();
         }

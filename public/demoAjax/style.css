@@ -102,6 +102,9 @@ button>img {
     flex-direction: row;
     justify-content: space-around;
 }
+#editUser{
+    display: none;
+}
 
 .logout {
     display: none;
@@ -137,7 +140,6 @@ button>img {
 }
 
 @media only screen and (max-width: 1000px) and (min-width:768px) {
-
     .red,
     .editar,
     .loginbtn {

@@ -199,6 +199,8 @@ class UserController
                 $req_data['username'],
                 $req_data['email'],
                 $req_data['password'],
+                $req_data['fechanac'],
+                $req_data['activo'],
                 $req_data['role'] ?? Role::ROLE_READER
             );
         } catch (Throwable) {    // 400 BAD REQUEST: Unexpected role

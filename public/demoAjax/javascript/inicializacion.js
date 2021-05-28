@@ -25,10 +25,10 @@ const modalForm= new bootstrap.Modal(document.getElementById("modalFormulario"),
 });
 //para guardar userid cuando se logue
 let userid;
+let usuarioLogueado;
 //contenido formularios modales
 const contenidoLogin = document.getElementById("contenidoModalLogin");
 const contenidoFormAdd = document.getElementById("modalFormAdd");
-const mBodyFormulario = document.getElementById("mBodyFormulario");
 
 function Persona(id, nombre, fecha_nac, fecha_muerto, img, wiki, entidades, productos) {
     this.id = id;
