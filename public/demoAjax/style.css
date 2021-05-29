@@ -61,16 +61,18 @@ button > img {
     background-color: #d8f3e5;
 }
 
-.btnRel {
-    border: 2px solid #339966;
+.btnRel,
+.borrarRel{
+    border: 1px solid #339966;
     border-radius: 4px;
     color: black;
     box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
     padding: 0.2em 1.5em;
     background-color: #d8f3e5;
-    margin-top: 4px;
+    margin: 2px 0 2px auto;
 }
 
+.borrarRel,
 .red {
     border-color: red;
     background-color: #ffe6e6;
@@ -81,10 +83,12 @@ button > img {
     margin: 0 auto 0.5em auto;
 }
 
+.borrarRel:hover,
 .red:hover {
     background-color: #ffb3b3;
 }
 
+.btnRel:hover,
 .editar:hover,
 .loginbtn:hover {
     background-color: #66cc99;

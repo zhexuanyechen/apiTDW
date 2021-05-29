@@ -136,8 +136,7 @@ function imprimirDesc(datosAux) {
     for (let atributo in datosAux) {
         if (atributo === "products" || atributo === "persons" || atributo === "entities") {
             let id = "lista" + atributo;
-            html += `<div class='mb-2'><h4>${atributo}</h4><ul class='datos' id='${id}'>`;
-            html += imprimirRelaciones(datosAux[atributo], atributo);
+            html += imprimirRelaciones(datosAux[atributo], atributo, id);
         } else if (atributo === "wikiUrl") {
             html += `<div class='mb-2 wiki'><h4>${atributo}</h4><a href='${datosAux[atributo]}' class='datos' target='_blank'>${datosAux[atributo]}</a></div>`;
         } else if (atributo !== "id") {
@@ -147,10 +146,10 @@ function imprimirDesc(datosAux) {
     return html;
 }
 
-function imprimirRelaciones(arrayRel, atributo) {
-    let html = "";
+function imprimirRelaciones(arrayRel, atributo, id) {
+    let html = `<div class='mb-2'><h4>${atributo}</h4><ul class='datos' id='${id}'>`;
     if (arrayRel === null) {
-        html += "Sin relaciones</ul></div>";
+        html += "</ul></div>";
     } else {
         for (let i = 0; i < arrayRel.length; i++) {
             let aux = "";
@@ -161,7 +160,7 @@ function imprimirRelaciones(arrayRel, atributo) {
             } else if (atributo === "persons") {
                 aux = arrayPersonas.find(persona => persona.id.slice(0, -4) == arrayRel[i]);
             }
-            html += `<li>${aux.name}</li>`;
+            html += `<li>${aux.name+" id: "+arrayRel[i]}</li>`;
         }
         html += "</ul></div>";
     }

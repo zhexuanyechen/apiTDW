@@ -1,9 +1,9 @@
 function cargarForm(objetoF) {
+    console.log(objetoF);
     let html = "";
     for (let atributo in objetoF) {
-        let htmlAux = "";
         if (atributo === "name") {
-            html += "<div class='mb-2'><label for='name' class='form-label'>Nombre</label>" +
+            html += "<div class='mb-2'><label for='name' class='form-label'>Name</label>" +
                 "<input type='text' class='form-control' value='" + objetoF[atributo] + "' id='name' required></div>";
         } else if (atributo === "birthDate" || atributo === "deathDate") {
             html += "<div class='mb-2'><label for='" + atributo + "' class='form-label'>" + atributo + "</label>" +
@@ -12,44 +12,120 @@ function cargarForm(objetoF) {
             html += "<div class='mb-2'><label for='" + atributo + "' class='form-label'>" + atributo + "</label>" +
                 "<input type='url' class='form-control' value='" + objetoF[atributo] + "' id='" + atributo + "' required></div>";
         } else if (atributo === "products") {
-            htmlAux = cargarCheckboxes(arrayProductos, "Productos relacionados");
-            html += htmlAux;
+            html += imprimirRelaciones(objetoF.products, atributo, "lista" + atributo);
+            html += `<div id="relproducts">
+                        <select id="selectProducts" class="form-select">
+                          ${imprimirOpcionesSelect(arrayProductos)}
+                        </select>
+                        <button type="button" class="btn borrarRel">Borrar relación</button>
+                        <button type="button" class="btn btnRel">Añadir relación</button>
+                    </div>`;
         } else if (atributo === "entities") {
-            htmlAux = cargarCheckboxes(arrayEntidades, "Entidades relacionadas");
-            html += htmlAux;
+            html += imprimirRelaciones(objetoF.entities, atributo, "lista" + atributo);
+            html += `<div id="relentities">
+                        <select id="selectEntities" class="form-select">
+                          ${imprimirOpcionesSelect(arrayEntidades)}
+                        </select>
+                        <button type="button" class="btn borrarRel">Borrar relación</button>
+                        <button type="button" class="btn btnRel">Añadir relación</button>
+                    </div>`;
         } else if (atributo === "persons") {
-            htmlAux = cargarCheckboxes(arrayPersonas, "Personas relacionadas");
-            html += htmlAux;
+            html += imprimirRelaciones(objetoF.persons, atributo, "lista" + atributo);
+            html += `<div id="relpersons">
+                        <select id="selectPersons" class="form-select">
+                          ${imprimirOpcionesSelect(arrayPersonas)}
+                        </select>
+                        <button type="button" class="btn borrarRel">Borrar relación</button>
+                        <button type="button" class="btn btnRel" >Añadir relación</button>
+                    </div>`;
         }
     }
     return html;
 }
 
-function cargarCheckboxes(array, title) {
-    let htmlAux = `<h4>${title}</h4>
-                    <ul class="list-group">`;
-    for (let i = 0; i < array.length; i++) {
-        htmlAux += `<li class="list-group-item">${array[i].name}</li>`;
-    }
-    htmlAux += "</ul>";
-    htmlAux += `<button type="button" class="btn btnRel">Añadir relación</button>`;
-    return htmlAux;
+function botonDeleteRel(objetoEditar) {
+    document.querySelectorAll(".borrarRel").forEach((boton) => {
+        boton.addEventListener("click", (event) => {
+            let id = event.target.parentNode.id;
+            let tipo = id.slice(3, id.length);
+            console.log("todavia no puedo borrar");
+            if (tipo === "Products") {
+            } else if (tipo === "Entities") {
+            } else if (tipo === "Persons") {
+            }
+        })
+    });
 }
 
-function guardarCheckboxesAjax(select, id) {
+function deleteRelAjax(authHeader, origen, destino, idOrigen, idDestino) {
+    $.ajax({
+        type: "PUT",
+        url: `/api/v1/${origen}/${idOrigen}/${destino}/rem/${idDestino}`,
+        headers: {"Authorization": authHeader},
+    })
+}
 
+function botonAddRel(objetoEditar, tipo) {
+    let newRel;
+    console.log(document.querySelectorAll(".btnRel"));
+    document.querySelectorAll(".btnRel").forEach((boton) => {
+        boton.addEventListener("click", (event) => {
+            let id = event.target.parentNode.id;
+            let tipoDes = id.slice(3, id.length);
+            if (tipoDes === "products") {
+                newRel= document.querySelector("#relproducts>select").value;
+                addRelAjax(authHeader, tipo, tipoDes, objetoEditar.id, newRel);
+            } else if (tipoDes === "entities") {
+                newRel= document.querySelector("#relentities>select").value;
+                addRelAjax(authHeader, tipo, tipoDes, objetoEditar.id, newRel);
+            } else if (tipoDes === "persons") {
+                newRel= document.querySelector("#relpersons>select").value;
+                addRelAjax(authHeader, tipo, tipoDes, objetoEditar.id, newRel);
+            }
+        })
+    });
+}
+
+function addRelAjax(authHeader, origen, destino, idOrigen, idDestino) {
+    $.ajax({
+        type: "PUT",
+        url: `/api/v1/${origen}/${idOrigen}/${destino}/add/${idDestino}`,
+        headers: {"Authorization": authHeader},
+        success:function (data){
+            let addedElem;
+            console.log(data);
+            if(destino === "products"){
+                addedElem = arrayProductos.find(producto => producto.id.slice(0, -4) == idDestino);
+                document.getElementById("listaproducts").innerHTML += `<li>${addedElem.name+" id: "+idDestino}</li>`
+            } else if(destino === "entities"){
+                addedElem = arrayEntidades.find(producto => producto.id.slice(0, -4) == idDestino);
+                document.getElementById("listaentities").innerHTML += `<li>${addedElem.name+" id: "+idDestino}</li>`
+            } else if(destino === "persons"){
+                addedElem = arrayPersonas.find(producto => producto.id.slice(0, -4) == idDestino);
+                document.getElementById("listapersons").innerHTML += `<li>${addedElem.name+" id: "+idDestino}</li>`
+            }
+        }
+    });
+}
+
+function imprimirOpcionesSelect(array) {
+    let html = "";
+    array.forEach((objeto) => {
+        html += `<option value='${objeto.id.slice(0, -4)}'>${objeto.name+" id: "+objeto.id.slice(0, -4)}</option>`
+    });
+    return html;
 }
 
 function crear(id) {
     let objetoCrear, url;
     if (id === "btnProducto") {
-        objetoCrear = new Producto("", "", "", "", "", [], []);
+        objetoCrear = new Producto("", "", "", "", "", "",[], []);
         url = '/api/v1/products';
     } else if (id === "btnEntidad") {
-        objetoCrear = new Entidad("", "", "", "", "", [], []);
+        objetoCrear = new Entidad("", "", "", "", "", "",[], []);
         url = '/api/v1/entities';
     } else if (id === "btnPersona") {
-        objetoCrear = new Persona("", "", "", "", "", [], []);
+        objetoCrear = new Persona("", "", "", "", "", "",[], []);
         url = '/api/v1/persons';
     }
     let html = `<div class="modal-header">
@@ -70,7 +146,7 @@ function crear(id) {
         e.preventDefault();
         crearAjax(authHeader, url, id);
         modalForm.hide();
-    })
+    });
 }
 
 function botonCrear() {
@@ -234,14 +310,30 @@ function guardarEditarAjax(authHeader, editarId, tipo, etag) {
                 showBtn();
                 addClickListener("#personasCol .imagen", "persons");
             } else if (tipo === "entities") {
+                dataAux = data.entity;
+                console.log(dataAux);
+                let id = dataAux.id + "enti";
+                let elem = document.getElementById(id);
+                elem.parentNode.removeChild(elem);
+                cargarObjetos(entidadesId, {id: id, name: dataAux.name, imageUrl: dataAux.imageUrl});
+                showBtn();
+                addClickListener("#entidadesCol .imagen", "entities");
             } else if (tipo === "products") {
+                dataAux = data.product;
+                console.log(dataAux);
+                let id = dataAux.id + "prod";
+                let elem = document.getElementById(id);
+                elem.parentNode.removeChild(elem);
+                cargarObjetos(productosId, {id: id, name: dataAux.name, imageUrl: dataAux.imageUrl});
+                showBtn();
+                addClickListener("#productosCol .imagen", "products");
             }
             modalForm.hide();
         }
     })
 }
 
-function editar(objetoEditar, editar, etag) {
+function editar(objetoEditar, tipo, etag) {
     console.log(objetoEditar);
     let html = `<div class="modal-header">
                    <h3 class="modal-title">Editar</h3>
@@ -257,8 +349,8 @@ function editar(objetoEditar, editar, etag) {
     contenidoFormAdd.innerHTML = html;
     document.getElementById("guardarCambios").addEventListener("click", (e) => {
         e.preventDefault();
-        guardarEditarAjax(authHeader, objetoEditar.id, editar, etag);
-    })
+        guardarEditarAjax(authHeader, objetoEditar.id, tipo, etag);
+    });
 }
 
 function showEditarAjax(authHeader, prodId, tipo) {
@@ -279,6 +371,8 @@ function showEditarAjax(authHeader, prodId, tipo) {
                 datosAux = data.person;
             editar(datosAux, tipo, etag);
             modalForm.show();
+            botonAddRel(datosAux, tipo);
+            botonDeleteRel(datosAux, tipo);
         }
     });
 }
