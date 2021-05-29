@@ -136,7 +136,9 @@ function imprimirDesc(datosAux) {
     for (let atributo in datosAux) {
         if (atributo === "products" || atributo === "persons" || atributo === "entities") {
             let id = "lista" + atributo;
+            html +=`<div class='mb-2'><h4>${atributo}</h4><ul class='datos' id='${id}'>`;
             html += imprimirRelaciones(datosAux[atributo], atributo, id);
+            html += "</ul></div>"
         } else if (atributo === "wikiUrl") {
             html += `<div class='mb-2 wiki'><h4>${atributo}</h4><a href='${datosAux[atributo]}' class='datos' target='_blank'>${datosAux[atributo]}</a></div>`;
         } else if (atributo !== "id") {
@@ -147,9 +149,9 @@ function imprimirDesc(datosAux) {
 }
 
 function imprimirRelaciones(arrayRel, atributo, id) {
-    let html = `<div class='mb-2'><h4>${atributo}</h4><ul class='datos' id='${id}'>`;
+    let html = "";
     if (arrayRel === null) {
-        html += "</ul></div>";
+        html += "";
     } else {
         for (let i = 0; i < arrayRel.length; i++) {
             let aux = "";
@@ -162,7 +164,6 @@ function imprimirRelaciones(arrayRel, atributo, id) {
             }
             html += `<li>${aux.name+" id: "+arrayRel[i]}</li>`;
         }
-        html += "</ul></div>";
     }
     return html;
 }
