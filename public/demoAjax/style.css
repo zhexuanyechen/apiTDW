@@ -187,13 +187,18 @@ h4 {
     justify-content: center;
 }
 
+.btnGestionarUsersContainer>button{
+    margin-bottom: 0.5rem;
+}
+
 .usuarioContainer{
     margin: 0.1rem 0.2rem 0.5rem 0.2rem;
     border: 1px solid black;
     border-radius: 5px;
 }
 
-#containerAllUsers{
+#containerAllUsers
+{
     overflow-y: scroll;
     max-height: 60vh;
 }

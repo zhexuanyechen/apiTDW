@@ -58,6 +58,10 @@ class LoginController
             return Error::error($response, StatusCode::STATUS_NOT_FOUND);
         }
 
+        if ($user->getActivo() === "inactivo") {    // 404
+            return Error::error($response, StatusCode::STATUS_NOT_FOUND);
+        }
+
         if (!array_key_exists('scope', $req_data)) {
             $token = $this->jwtAuth->createJwt($user);
         } else {

@@ -18,15 +18,15 @@ function actualizarUserAjax(authHeader){
     });
 }
 
-function getEtagUser(authHeader){
+function getEtagUserAjax(authHeader, userid){
     $.ajax({
         type: "GET",
-        url: "/api/v1/users/"+userid,
+        url: `/api/v1/users/${userid}`,
         headers: {"Authorization": authHeader},
         cache: false,
         success: function (data, textStatus, request){
             console.log(data);
-            usuarioEtag=request.getResponseHeader("etag");
+            usuarioEtag = request.getResponseHeader("etag");
             console.log(usuarioEtag);
         }
     });
@@ -80,7 +80,6 @@ function botonEditarUser(){
 function botonGestionarUsers(){
     gestionarUsers.addEventListener("click", ()=>{
         getAllUsersAjax(authHeader);
-
     });
 }
 
@@ -102,8 +101,8 @@ function showAllUsers(userArray){
         }
         html+=`<div id='${idAux}' class="row usuarioContainer"><div class="col-6">${htmlAux}</div>`;
         html+=`<div class='col-6 btnGestionarUsersContainer'>
-                 <button id='${idAux+'rol'}' type="button" class="btn loginbtn" onclick="">Cambiar rol</button>
-                 <button id='${idAux+'act'}' type="button" class="btn loginbtn">Des/Activar</button>
+                 <button id='${idAux+'rol'}' type="button" class="btn loginbtn" onclick="updateRol(this.id)">Cambiar rol</button>
+                 <button id='${idAux+'act'}' type="button" class="btn loginbtn" onclick="updateActivo(this.id)">Des/Activar</button>
                  <button id='${idAux+'del'}' type="button" class="btn red" onclick="deleteUser(this.id)">Eliminar</button>
             </div></div>`;
     }
@@ -125,9 +124,99 @@ function deleteUserAjax(authHeader,id){
         headers: {"Authorization": authHeader},
         success: function(){
             console.log("Se ha borrado");
-            getAllUsersAjax(authHeader);
         }
     })
+}
+
+function updateRol(btnId){
+    let id = btnId.slice(0, -7);
+    let usuarioEncontrado = arrayUsers.find(usuario => usuario.user.id == id); //compara int con string
+    console.log(usuarioEncontrado);
+    let rol;
+    if(usuarioEncontrado.user.role === "writer"){
+        rol="reader";
+        updateRolAjax(authHeader, usuarioEncontrado.user, rol);
+    } else if(usuarioEncontrado.user.role === "reader"){
+        rol="writer";
+        updateRolAjax(authHeader, usuarioEncontrado.user, rol);
+    }
+}
+
+function updateRolAjax(authHeader, usuario, rol){
+    $.ajax({
+        type: "GET",
+        url: `/api/v1/users/${usuario.id}`,
+        headers: {"Authorization": authHeader},
+        cache: false,
+        success: function (data, textStatus, request){
+            console.log(data);
+            putRolAjax(authHeader, usuario, rol, request.getResponseHeader("etag")) ;
+            console.log(request.getResponseHeader("etag"));
+        }
+    });
+}
+
+function putRolAjax(authHeader, usuario, rol, etag){
+    let datos = {role: rol};
+    console.log(datos);
+    $.ajax({
+        type: "PUT",
+        url: `/api/v1/users/${usuario.id}`,
+        data: datos,
+        headers: {"Authorization": authHeader, "If-Match": etag},
+        cache: false,
+        success: function (data){
+            console.log(data);
+            console.log("Se ha actualizado rol");
+            modalLogin.hide();
+        }
+    });
+}
+
+function updateActivo(btnId){
+    let id = btnId.slice(0, -7);
+    let usuarioEncontrado = arrayUsers.find(usuario => usuario.user.id == id); //compara int con string
+    console.log(usuarioEncontrado);
+    let isActivo;
+    if(usuarioEncontrado.user.activo === "activo"){
+        isActivo="inactivo";
+        updateActivoAjax(authHeader, usuarioEncontrado.user, isActivo);
+    } else if(usuarioEncontrado.user.activo === "inactivo"){
+        isActivo="activo";
+        updateActivoAjax(authHeader, usuarioEncontrado.user, isActivo);
+    }
+}
+
+function updateActivoAjax(authHeader, usuario, activo){
+    $.ajax({
+        type: "GET",
+        url: `/api/v1/users/${usuario.id}`,
+        headers: {"Authorization": authHeader},
+        cache: false,
+        success: function (data, textStatus, request){
+            console.log(data);
+            console.log(activo);
+            putActivoAjax(authHeader, usuario, activo, request.getResponseHeader("etag")) ;
+            console.log(request.getResponseHeader("etag"));
+        }
+    });
+}
+
+function putActivoAjax(authHeader, usuario, activo, etag){
+    let datos = {activo:activo};
+    console.log(datos);
+    $.ajax({
+        type: "PUT",
+        url: `/api/v1/users/${usuario.id}`,
+        data: datos,
+        headers: {"Authorization": authHeader, "If-Match": etag},
+        cache: false,
+        success: function (data){
+            console.log(data);
+            console.log("Se ha actualizado activo");
+            modalLogin.hide();
+        }
+    });
 }
 
 function signup() {

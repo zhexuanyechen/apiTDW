@@ -155,7 +155,8 @@ function rolUser(authHeader, username) {
         url: '/api/v1/users',
         headers: {"Authorization": authHeader},
         success: function (data) {
-            let usuarioEncontrado = data.users.find(usuario => usuario.user.username === username);
+            arrayUsers = data.users;
+            let usuarioEncontrado = arrayUsers.find(usuario => usuario.user.username === username);
             usuarioLogueado = usuarioEncontrado.user;
             if (usuarioEncontrado.user.role === "writer") {
                 sessionStorage.setItem("logueado", "true");
@@ -163,7 +164,7 @@ function rolUser(authHeader, username) {
                 showBtn();
                 console.log("Es writer");
                 userid = usuarioEncontrado.user.id;
-                getEtagUser(authHeader);
+                getEtagUserAjax(authHeader, userid);
                 imprimirUsuario(usuarioLogueado);
             } else if (usuarioEncontrado.user.role === "reader") {
                 sessionStorage.setItem("logueado", "true");
@@ -171,7 +172,7 @@ function rolUser(authHeader, username) {
                 console.log("Es reader");
                 showBtn(usuarioEncontrado);
                 userid = usuarioEncontrado.user.id;
-                getEtagUser(authHeader);
+                getEtagUserAjax(authHeader, userid);
                 imprimirUsuario(usuarioLogueado);
             } else {
                 console.log("no se ha encontrado");
@@ -308,10 +309,12 @@ function getAllUsersAjax(authHeader){
     $.ajax({
         type: "GET",
         url: "/api/v1/users",
+        cache:false,
         headers: {"Authorization": authHeader},
         success: function(data){
-            console.log(data);
-            showAllUsers(data.users);
+            arrayUsers=data.users;
+            console.log(arrayUsers);
+            showAllUsers(arrayUsers);
         }
     })
 }

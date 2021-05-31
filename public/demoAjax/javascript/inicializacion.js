@@ -33,6 +33,7 @@ const contenidoLogin = document.getElementById("contenidoModalLogin");
 const contenidoFormAdd = document.getElementById("modalFormAdd");
 //div para los datos de usuarios
 const userDiv = document.getElementById("userInfo")
+let arrayUsers, usuarioEdit;
 
 function Persona(id, nombre, fecha_nac, fecha_muerto, img, wiki, entidades, productos) {
     this.id = id;
