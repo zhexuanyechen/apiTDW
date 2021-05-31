@@ -228,9 +228,9 @@ class UserController
      */
     public function put(Request $request, Response $response, array $args): Response
     {
-        if (!$this->checkWriterScope($request)) { // 403 => 404 por seguridad
-            return Error::error($response, StatusCode::STATUS_NOT_FOUND);
-        }
+        //if (!$this->checkWriterScope($request)) { // 403 => 404 por seguridad
+          //  return Error::error($response, StatusCode::STATUS_NOT_FOUND);
+        //}
 
         $req_data
             = $request->getParsedBody() ?? json_decode($request->getBody(), true) ?? [];
@@ -273,6 +273,11 @@ class UserController
         // fechanac
         if (isset($req_data['fechanac'])) {
             $user->setFechaNac($req_data['fechanac']);
+        }
+
+        //activo
+        if (isset($req_data['activo'])) {
+            $user->setActivo($req_data['activo']);
         }
 
         // role
