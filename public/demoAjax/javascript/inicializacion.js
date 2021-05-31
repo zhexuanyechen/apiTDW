@@ -12,7 +12,8 @@ const documento = document.documentElement;
 const loginbtn = document.getElementById("loginNav");
 const logoutbtn = document.getElementById("logout");
 const signupbtn = document.getElementById("signupNav");
-const editarbtn = document.getElementById("editUser");
+const gestionarUsers = document.getElementById("gestionarUsers");
+let editarbtn;
 const botonesCrear = document.querySelectorAll(".crear");
 //modales
 const modalLogin = new bootstrap.Modal(document.getElementById("modalLogin"), {
@@ -30,6 +31,8 @@ let usuarioEtag;
 //contenido formularios modales
 const contenidoLogin = document.getElementById("contenidoModalLogin");
 const contenidoFormAdd = document.getElementById("modalFormAdd");
+//div para los datos de usuarios
+const userDiv = document.getElementById("userInfo")
 
 function Persona(id, nombre, fecha_nac, fecha_muerto, img, wiki, entidades, productos) {
     this.id = id;

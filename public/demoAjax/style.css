@@ -118,6 +118,11 @@ button > img {
 }
 
 #editUser {
+    display: inline-block;
+    width: 300px;
+}
+
+#gestionarUsers{
     display: none;
 }
 
@@ -174,4 +179,21 @@ button > img {
 
 h4 {
     text-transform: capitalize;
+}
+
+.btnGestionarUsersContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.usuarioContainer{
+    margin: 0.1rem 0.2rem 0.5rem 0.2rem;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+#containerAllUsers{
+    overflow-y: scroll;
+    max-height: 60vh;
 }

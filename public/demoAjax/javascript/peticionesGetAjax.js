@@ -1,30 +1,3 @@
-function login() {
-    let user = $("#usuario").val();
-    let pwd = $("#pwd").val();
-    let dataString = "username=" + user + "&password=" + pwd;
-    $.ajax({
-        type: "POST",
-        url: "/access_token",
-        data: dataString,
-        cache: false,
-        success: function (data, textStatus, request) {
-            authHeader = request.getResponseHeader('Authorization');
-            console.log("holiwi");
-            rolUser(authHeader, user);
-            modalLogin.hide();
-        }
-    });
-}
-
-function showToken(authHeader) {
-    let token = authHeader.split(' ')[1];   // Elimina 'Bearer '
-    let myData = JSON.parse(atob(token.split('.')[1]));
-    $('#mytoken').html(
-        "User: " + JSON.stringify(myData.sub) +
-        " - JWT Scopes: " + JSON.stringify(myData.scopes)
-    );
-}
-
 function cargarAjax() {
     cargarAjaxProd();
     cargarAjaxPersonas();
@@ -43,7 +16,6 @@ function cargarAjaxEntidades() {
                     entityAux.imageUrl, entityAux.wikiUrl, entityAux.persons, entityAux.products);
                 cargarObjetos(entidadesId, nuevaEnt);
                 addClickListener("#entidadesCol .imagen", "entities");
-                console.log(nuevaEnt);
                 arrayEntidades.push(nuevaEnt);
             });
         }
@@ -94,10 +66,6 @@ function cargarObjetos(id, objeto) {
         <div class='mb-2 botonesObjeto'><button type='button' class='btn red borrar'>Borrar</button>
         <button type='button' class='btn editar' data-bs-toggle='modal' data-bs-target='#modalFormulario'>Editar</button></div></div>`;
 }
-
-$(document).ready(function () {
-    cargarAjax();
-});
 
 function showDescAjax(prodId, tipo) {
     $.ajax({
@@ -187,23 +155,24 @@ function rolUser(authHeader, username) {
         url: '/api/v1/users',
         headers: {"Authorization": authHeader},
         success: function (data) {
-            editarbtn.style.display = "inline-block";
             let usuarioEncontrado = data.users.find(usuario => usuario.user.username === username);
             usuarioLogueado = usuarioEncontrado.user;
-            if (usuarioEncontrado != null && usuarioEncontrado.user.role === "writer") {
+            if (usuarioEncontrado.user.role === "writer") {
                 sessionStorage.setItem("logueado", "true");
                 sessionStorage.setItem("role", "writer");
                 showBtn();
                 console.log("Es writer");
                 userid = usuarioEncontrado.user.id;
                 getEtagUser(authHeader);
-            } else if (usuarioEncontrado != null && usuarioEncontrado.user.role !== "writer") {
+                imprimirUsuario(usuarioLogueado);
+            } else if (usuarioEncontrado.user.role === "reader") {
                 sessionStorage.setItem("logueado", "true");
                 sessionStorage.setItem("role", "reader");
                 console.log("Es reader");
-                showBtn();
+                showBtn(usuarioEncontrado);
                 userid = usuarioEncontrado.user.id;
                 getEtagUser(authHeader);
+                imprimirUsuario(usuarioLogueado);
             } else {
                 console.log("no se ha encontrado");
             }
@@ -220,8 +189,7 @@ function showBtn() {
         loginbtn.style.display = "none";
         logoutbtn.style.display = "inline-block";
         signupbtn.style.display = "none";
-        editarbtn.style.display = "inline-block";
-        botonEditarUser();
+        gestionarUsers.style.display = "inline-block";
         if (role === "writer") {
             for (let i = 0; i < displaybtn.length; i++) {
                 displaybtn[i].style.display = "flex";
@@ -230,7 +198,9 @@ function showBtn() {
             botonCrear();
             botonBorrar();
             botonEditar();
+            botonGestionarUsers();
         }
+        logoutbtn.addEventListener("click", logout);
     } else {
         for (let i = 0; i < displaybtn.length; i++) {
             displaybtn[i].style.display = "none";
@@ -238,17 +208,10 @@ function showBtn() {
         loginbtn.style.display = "inline-block";
         logoutbtn.style.display = "none";
         signupbtn.style.display = "inline-block";
-        editarbtn.style.display = "none";
+        gestionarUsers.style.display = "none";
         documento.style.setProperty("--displayCrear", "none");
     }
 }
-
-function logout() {
-    sessionStorage.setItem("logueado", "false");
-    showBtn();
-}
-
-logoutbtn.addEventListener("click", logout);
 
 loginbtn.addEventListener("click", () => {
     let html = `  <div class="modal-header">
@@ -313,7 +276,7 @@ signupbtn.addEventListener("click", () => {
     contenidoLogin.innerHTML = html;
     document.querySelectorAll("#signupForm input").forEach(function (input) {
         input.addEventListener("keyup", () => {
-            validacionFormulario(document.querySelectorAll("#signupForm input"), document.getElementById("signup"));
+            validacionFormulario(document.querySelectorAll("#signupForm input"), document.getElementById("signup"), 3);
         });
     });
     $("#signup").click((e) => {
@@ -323,30 +286,7 @@ signupbtn.addEventListener("click", () => {
     modalLogin.show();
 });
 
-function signup() {
-    let user = $("#usuario").val();
-    let pwd = $("#pwd").val();
-    let email = $("#email").val();
-
-    $.ajax({
-        type: "POST",
-        url: "/api/v1/users",
-        data: {username: user, email: email, password: pwd, role: "reader", fechanac: "", activo: "activo"},
-        cache: false,
-        success: function (data) {
-            console.log(data);
-            login();
-            modalLogin.hide();
-        },
-        statusCode: {
-            400: function () {
-                document.getElementById("pError").innerText = "Ya existe este usuario o email";
-            }
-        }
-    });
-};
-
-function validacionFormulario(formulario, boton) {
+function validacionFormulario(formulario, boton, numInput) {
     let completado = 0;
     formulario.forEach(function (input) {
         if (input.value.trim() === "") {
@@ -355,9 +295,23 @@ function validacionFormulario(formulario, boton) {
             completado++;
         }
     });
-    if (completado === 3) {
+    if (completado === numInput) {
         boton.disabled = false;
     }
 }
 
+$(document).ready(function () {
+    cargarAjax();
+});
 
+function getAllUsersAjax(authHeader){
+    $.ajax({
+        type: "GET",
+        url: "/api/v1/users",
+        headers: {"Authorization": authHeader},
+        success: function(data){
+            console.log(data);
+            showAllUsers(data.users);
+        }
+    })
+}

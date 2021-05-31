@@ -1,9 +1,9 @@
-function actualizarUser(authHeader){
+function actualizarUserAjax(authHeader){
     let user = $("#usuarioE").val();
     let pwd = $("#pwdE").val();
     let email = $("#emailE").val();
     let fechanac = $("#fechanacE").val();
-    let dataString = JSON.stringify({username: user, email: email, password:pwd, role: usuarioLogueado.role, activo:"activo", fechanac:fechanac});
+    let dataString = {username: user, email: email, password:pwd, role: usuarioLogueado.role, fechanac:fechanac, activo:"activo"};
 
     $.ajax({
         type: "PUT",
@@ -20,7 +20,7 @@ function actualizarUser(authHeader){
 
 function getEtagUser(authHeader){
     $.ajax({
-        type: "Get",
+        type: "GET",
         url: "/api/v1/users/"+userid,
         headers: {"Authorization": authHeader},
         cache: false,
@@ -38,10 +38,7 @@ function botonEditarUser(){
                         <h3 class="modal-title">Editar perfil</h3>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <form id="signupForm" class="modal-body">
-                        <div class="mb-2">
-                            <img class="loginImg" src="iconos/user.png" class="me-2">
-                        </div>
+                    <form id="editForm" class="modal-body">
                         <div class="mb-2">
                             <label for="emailE" class="form-label">Email</label>
                             <input type="text" class="form-control" value="${usuarioLogueado.email}" id="emailE">
@@ -60,16 +57,146 @@ function botonEditarUser(){
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn red" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" id="editarPerfil" class="btn loginbtn"><img
-                                    src="iconos/user.png" class="me-2">Editar Perfil</button>
+                            <button type="submit" id="editarPerfil" class="btn loginbtn">Guardar cambios</button>
                         </div>
                     </form>`;
         contenidoLogin.innerHTML=html;
-        $('#signupForm')[0].reset();
+        $('#editForm')[0].reset();
+        imprimirUsuario(usuarioLogueado);
+        document.getElementById("editarPerfil").disabled=true;
+        document.querySelectorAll("#editForm input").forEach(function (input) {
+            input.addEventListener("keyup", () => {
+                validacionFormulario(document.querySelectorAll("#editForm input"), document.getElementById("editarPerfil"), 4);
+            });
+        });
         $("#editarPerfil").click((e)=>{
             e.preventDefault();
-            actualizarUser();
+            actualizarUserAjax();
         });
         modalLogin.show();
     });
+}
+
+function botonGestionarUsers(){
+    gestionarUsers.addEventListener("click", ()=>{
+        getAllUsersAjax(authHeader);
+
+    });
+}
+
+function showAllUsers(userArray){
+    let html=`<div class="modal-header">
+                        <h3 class="modal-title">Gestión usuarios</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                <div id="containerAllUsers" class="modal-body">`;
+    for(let i=0; i<userArray.length; i++){
+        let auxObject = userArray[i].user;
+        let htmlAux="";
+        let idAux;
+        for(atributo in auxObject){
+            htmlAux+=`<p><strong>${atributo}: </strong>${auxObject[atributo]}</p>`;
+            if(atributo === "id"){
+                idAux=auxObject[atributo] + "user";
+            }
+        }
+        html+=`<div id='${idAux}' class="row usuarioContainer"><div class="col-6">${htmlAux}</div>`;
+        html+=`<div class='col-6 btnGestionarUsersContainer'>
+                 <button id='${idAux+'rol'}' type="button" class="btn loginbtn" onclick="">Cambiar rol</button>
+                 <button id='${idAux+'act'}' type="button" class="btn loginbtn">Des/Activar</button>
+                 <button id='${idAux+'del'}' type="button" class="btn red" onclick="deleteUser(this.id)">Eliminar</button>
+            </div></div>`;
+    }
+    html+="</div>";
+    contenidoLogin.innerHTML=html;
+    modalLogin.show();
+}
+
+function deleteUser(btnId){
+    let id = btnId.slice(0, -7);
+    console.log(id);
+    deleteUserAjax(authHeader,id);
+}
+
+function deleteUserAjax(authHeader,id){
+    $.ajax({
+        type: "DELETE",
+        url: `/api/v1/users/${id}`,
+        headers: {"Authorization": authHeader},
+        success: function(){
+            console.log("Se ha borrado");
+            getAllUsersAjax(authHeader);
+        }
+    })
+}
+
+function signup() {
+    let user = $("#usuario").val();
+    let pwd = $("#pwd").val();
+    let email = $("#email").val();
+
+    $.ajax({
+        type: "POST",
+        url: "/api/v1/users",
+        data: {username: user, email: email, password: pwd, role: "reader", fechanac: "", activo: "activo"},
+        cache: false,
+        success: function (data, textStatus, request) {
+            console.log(data);
+            console.log(textStatus+" "+request);
+            login();
+            modalLogin.hide();
+        },
+        statusCode: {
+            400: function () {
+                document.getElementById("pError").innerText = "Ya existe este usuario o email";
+            }
+        }
+    });
+};
+
+function login() {
+    let user = $("#usuario").val();
+    let pwd = $("#pwd").val();
+    let dataString = "username=" + user + "&password=" + pwd;
+    $.ajax({
+        type: "POST",
+        url: "/access_token",
+        data: dataString,
+        cache: false,
+        success: function (data, textStatus, request) {
+            authHeader = request.getResponseHeader('Authorization');
+            console.log(authHeader);
+            rolUser(authHeader, user);
+            modalLogin.hide();
+        }
+    });
+}
+
+function imprimirUsuario(user){
+    let html = "";
+    for(atributo in user){
+        html+=`<p><strong>${atributo}: </strong>${user[atributo]}</p>`;
+    }
+    userDiv.innerHTML=html;
+    userDiv.innerHTML+=`<button type="button" id="editUser" class="btn loginbtn align-items-center">
+                <img src="iconos/editar.png" class="me-2"><span>Editar Usuario</span></button>
+            <div>`;
+    editarbtn=document.getElementById("editUser");
+    botonEditarUser();
+}
+
+function logout() {
+    sessionStorage.setItem("logueado", "false");
+    showBtn();
+    userDiv.innerHTML="";
+    authHeader=null;
+}
+
+function showToken(authHeader) {
+    let token = authHeader.split(' ')[1];   // Elimina 'Bearer '
+    let myData = JSON.parse(atob(token.split('.')[1]));
+    $('#mytoken').html(
+        "User: " + JSON.stringify(myData.sub) +
+        " - JWT Scopes: " + JSON.stringify(myData.scopes)
+    );
 }
