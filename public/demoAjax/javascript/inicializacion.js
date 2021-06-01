@@ -34,7 +34,8 @@ const contenidoFormAdd = document.getElementById("modalFormAdd");
 //div para los datos de usuarios
 const userDiv = document.getElementById("userInfo")
 let arrayUsers, usuarioEdit;
-
+//para ver si ya tienen funcion
+let btnCrearFun, btnDelFun, btnEditFun, btnGestFun;
 function Persona(id, nombre, fecha_nac, fecha_muerto, img, wiki, entidades, productos) {
     this.id = id;
     this.name = nombre;

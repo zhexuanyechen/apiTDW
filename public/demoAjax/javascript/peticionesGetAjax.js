@@ -313,8 +313,8 @@ function getAllUsersAjax(authHeader){
         cache:false,
         headers: {"Authorization": authHeader},
         success: function(data){
+            console.log(data.users);
             arrayUsers=data.users;
-            console.log(arrayUsers);
             showAllUsers(arrayUsers);
         }
     })

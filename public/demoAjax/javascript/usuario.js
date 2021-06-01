@@ -78,7 +78,8 @@ function botonEditarUser(){
 }
 
 function botonGestionarUsers(){
-    gestionarUsers.addEventListener("click", ()=>{
+    $(document).off('click', '#gestionarUsers');
+    $(document).on('click', '#gestionarUsers', function () {
         getAllUsersAjax(authHeader);
     });
 }
