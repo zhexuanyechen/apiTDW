@@ -59,6 +59,7 @@ class LoginController
         }
 
         if ($user->getActivo() === "inactivo") {    // 404
+            echo 'Usuario inactivo';
             return Error::error($response, StatusCode::STATUS_NOT_FOUND);
         }
 

@@ -257,6 +257,12 @@ function login() {
             console.log(authHeader);
             rolUser(authHeader, user);
             modalLogin.hide();
+        },
+        statusCode: {
+            404: function () {
+                console.log("usuario inactivo");
+                window.alert("Este usuario está inactivo");
+            }
         }
     });
 }

@@ -236,6 +236,7 @@ loginbtn.addEventListener("click", () => {
                             <button type="submit" id="login" class="btn loginbtn"><img
                                     src="iconos/user.png" class="me-2">Login</button>
                         </div>
+                        <p id="pError"></p>
                      </form>
                 `;
     contenidoLogin.innerHTML = html;
